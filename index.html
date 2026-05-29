@@ -108,7 +108,6 @@
         }
         .panel-box h4 { margin: 0 0 8px 0; font-size: 0.85rem; color: #4a5568; }
 
-        /* Settings management list items styling */
         .mgmt-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; padding: 0; list-style: none;}
         .mgmt-item { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.8rem; font-weight: 600;}
         .mgmt-actions { display: flex; gap: 4px; }
@@ -396,15 +395,9 @@
             input.focus();
         }
 
-        /* 
-           Unrestricted Modular Move Engine:
-           Locates the true array position of the target item inside your global data array list,
-           and swaps its position with the next matching filtered sibling array index block.
-        */
         function moveItemInFilterContext(subject, pointerIndex, direction, currentFilter) {
             const globalList = trackerData[subject];
             
-            // Generate matching index map pointers list
             let filteredIndices = [];
             globalList.forEach((item, idx) => {
                 if (currentFilter === "ALL" || item.group === currentFilter) {
@@ -420,7 +413,6 @@
 
             const targetGlobalIndex = filteredIndices[targetPositionalIndex];
 
-            // Perform structural array node cell data values swapping sequence
             const temp = globalList[pointerIndex];
             globalList[pointerIndex] = globalList[targetGlobalIndex];
             globalList[targetGlobalIndex] = temp;
@@ -452,10 +444,25 @@
                     clearText = clearText.replace("const sscBackupData = ", "");
                     if (clearText.endsWith(";")) clearText = clearText.slice(0, -1);
                 }
-                if (clearText.startsWith("{")) parsedData = JSON.parse(clearText);
-                else parsedData = JSON.parse(decodeURIComponent(atob(input)));
+                
+                // If the pasted file features old data schemas, map remaining "General" definitions out safely
+                if (clearText.startsWith("{")) {
+                    parsedData = JSON.parse(clearText);
+                } else {
+                    parsedData = JSON.parse(decodeURIComponent(atob(input)));
+                }
 
                 if (parsedData.trackerData && parsedData.subGroupsMap) {
+                    // Clean legacy "General" properties values directly from import objects profiles
+                    for (let s in parsedData.subGroupsMap) {
+                        parsedData.subGroupsMap[s] = parsedData.subGroupsMap[s].filter(g => g !== "General");
+                    }
+                    for (let s in parsedData.trackerData) {
+                        parsedData.trackerData[s].forEach(t => {
+                            if (t.group === "General") t.group = "";
+                        });
+                    }
+
                     trackerData = parsedData.trackerData;
                     subGroupsMap = parsedData.subGroupsMap;
                     saveData(); render(); alert("Syllabus fully recovered!");
@@ -477,9 +484,9 @@
                 listElement.innerHTML = ""; groupsBar.innerHTML = ""; selectDropdown.innerHTML = ""; mgmtList.innerHTML = "";
                 const activeFilter = activeGroupFilters[subject];
 
-                // Base drop-down choices defaults assignment setup
                 const defaultOpt = document.createElement('option');
                 defaultOpt.value = ""; defaultOpt.innerText = "No Group";
+                if (activeFilter === "" || activeFilter === "ALL") defaultOpt.selected = true;
                 selectDropdown.appendChild(defaultOpt);
 
                 subGroupsMap[subject].forEach(group => {
@@ -489,7 +496,6 @@
                     selectDropdown.appendChild(opt);
                 });
 
-                // Display Filter Tabs Pills Generator
                 const allWrapper = document.createElement('div');
                 allWrapper.className = `group-pill-wrapper ${activeFilter === 'ALL' ? 'active' : ''}`;
                 allWrapper.innerHTML = `<button class="group-btn" onclick="filterByGroup('${subject}', 'ALL')">Show All</button>`;
@@ -501,7 +507,6 @@
                     pillWrapper.innerHTML = `<button class="group-btn" onclick="filterByGroup('${subject}', '${group}')">${group}</button>`;
                     groupsBar.appendChild(pillWrapper);
 
-                    // Build Management rows list dashboard item cells safely
                     const mLi = document.createElement('li');
                     mLi.className = "mgmt-item";
                     mLi.innerHTML = `
@@ -516,14 +521,22 @@
 
                 let topicsList = trackerData[subject];
                 let average = 0;
-                if (topicsList.length > 0) {
-                    const total = topicsList.reduce((sum, item) => sum + item.questions, 0);
-                    average = total / topicsList.length;
+                
+                // SMART BASELINE ENGINE: Filters out any unattempted topics (0 questions)
+                let attemptedTopics = topicsList.filter(item => item.questions > 0);
+                if (attemptedTopics.length > 0) {
+                    const total = attemptedTopics.reduce((sum, item) => sum + item.questions, 0);
+                    average = total / attemptedTopics.length;
                 }
                 baselineElement.innerText = `Avg: ${average.toFixed(1)}`;
 
                 let outputItems = topicsList.map((item, idx) => ({ ...item, pointerIndex: idx }));
-                if (activeFilter !== "ALL") outputItems = outputItems.filter(item => item.group === activeFilter);
+                if (activeFilter !== "ALL") {
+                    outputItems = outputItems.filter(item => {
+                        if (activeFilter === "") return !item.group;
+                        return item.group === activeFilter;
+                    });
+                }
 
                 if (autoSortActive) {
                     outputItems.sort((a, b) => {
