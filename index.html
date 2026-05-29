@@ -15,7 +15,6 @@
             --flag-red: #ff7675;
             --flag-yellow: #ffeaa7;
             --flag-green: #55efc4;
-            --group-bg: #ffeaa7;
         }
 
         body {
@@ -44,7 +43,7 @@
         }
 
         .tab-btn {
-            flex: 1 1 calc(50% - 4px); /* Fallback calculation forces two crisp rows on small screens if needed */
+            flex: 1 1 calc(50% - 4px);
             min-width: 80px;
             background: transparent;
             border: none;
@@ -63,10 +62,10 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* Sub-Groups Wrapping Container Block */
+        /* Sub-Groups Wrapping Container Block with Pill Actions */
         .sub-group-bar {
             display: flex;
-            flex-wrap: wrap; /* Automatically wraps tabs to a secondary row when filled */
+            flex-wrap: wrap;
             gap: 6px;
             margin-bottom: 15px;
             background: rgba(0, 0, 0, 0.03);
@@ -74,26 +73,55 @@
             border-radius: 8px;
         }
 
-        .group-btn {
+        .group-pill-wrapper {
+            display: inline-flex;
+            align-items: center;
             background: #e2e8f0;
             border: 1px solid #cbd5e1;
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
             border-radius: 20px;
-            color: #475569;
-            cursor: pointer;
+            padding: 2px 4px 2px 10px;
+            gap: 4px;
         }
 
-        .group-btn.active {
+        .group-pill-wrapper.active {
             background: var(--primary-purple);
             color: white;
             border-color: var(--primary-purple);
         }
 
-        .group-btn.all-btn { border-style: dashed; }
+        .group-btn {
+            background: transparent;
+            border: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            padding: 4px 0;
+        }
 
-        /* Interactive Setup Elements */
+        .group-pill-wrapper.active .group-btn {
+            color: white;
+        }
+
+        .pill-action-btn {
+            background: transparent;
+            border: none;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: #94a3b8;
+            padding: 2px 4px;
+            border-radius: 50%;
+        }
+
+        .group-pill-wrapper.active .pill-action-btn {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .pill-action-btn:hover {
+            background: rgba(0,0,0,0.08);
+        }
+
+        /* Interactive Input Setup Elements */
         .group-creation-panel {
             background: #edf2f7;
             padding: 10px;
@@ -161,11 +189,11 @@
 
     <header>
         <h1>SSC Syllabus Tracker</h1>
-        <p>Auto-wrapping Rows & External File JS Backups</p>
+        <p>Smart Group Mapping & Group Management Settings</p>
     </header>
 
     <div class="container">
-        <!-- Main Subjects Wrapping Tab Bar -->
+        <!-- Main Subjects Tabs Bar -->
         <div class="tabs-nav">
             <button class="tab-btn active" id="btn-tab-english" onclick="switchTab('english')">English</button>
             <button class="tab-btn" id="btn-tab-maths" onclick="switchTab('maths')">Maths</button>
@@ -181,8 +209,7 @@
             </label>
         </div>
 
-        <!-- Master Content View Blueprint Wrapper -->
-        <!-- The JavaScript rendering loop automatically manages internal elements inside these card boxes -->
+        <!-- Subject Panels -->
         <div class="subject-card active" id="english-card">
             <div class="subject-header"><h2 class="subject-title">English</h2><span class="baseline-badge" id="english-baseline">Avg: 0</span></div>
             <div class="sub-group-bar" id="english-groups-bar"></div>
@@ -243,7 +270,7 @@
             <ul class="topic-list" id="ga-list"></ul>
         </div>
 
-        <!-- Secure JS File Backup Module Window -->
+        <!-- JS File Backup Module Window -->
         <div class="backup-card">
             <h3>Fail-Safe External File Storage Guard</h3>
             <div class="file-input-wrapper">
@@ -257,24 +284,23 @@
     </div>
 
     <script>
-        // Core Structured State Schema Configuration
-        let trackerData = JSON.parse(localStorage.getItem('sscV4_Data')) || {
+        // Core Storage Setup using versioned names to isolate previous errors cleanly
+        let trackerData = JSON.parse(localStorage.getItem('sscV5_Data')) || {
             english: [], maths: [], reasoning: [], ga: []
         };
 
-        let subGroupsMap = JSON.parse(localStorage.getItem('sscV4_Groups')) || {
+        let subGroupsMap = JSON.parse(localStorage.getItem('sscV5_Groups')) || {
             english: ["General"], maths: ["General"], reasoning: ["General"], ga: ["General"]
         };
 
-        // Active filter index tracking maps
         let activeGroupFilters = { english: "ALL", maths: "ALL", reasoning: "ALL", ga: "ALL" };
-        let autoSortActive = JSON.parse(localStorage.getItem('sscV4_Sort')) || false;
+        let autoSortActive = JSON.parse(localStorage.getItem('sscV5_Sort')) || false;
         let currentTab = 'english';
 
         function saveData() {
-            localStorage.setItem('sscV4_Data', JSON.stringify(trackerData));
-            localStorage.setItem('sscV4_Groups', JSON.stringify(subGroupsMap));
-            localStorage.setItem('sscV4_Sort', JSON.stringify(autoSortActive));
+            localStorage.setItem('sscV5_Data', JSON.stringify(trackerData));
+            localStorage.setItem('sscV5_Groups', JSON.stringify(subGroupsMap));
+            localStorage.setItem('sscV5_Sort', JSON.stringify(autoSortActive));
         }
 
         function switchTab(subject) {
@@ -292,7 +318,7 @@
             render();
         }
 
-        /* Group Allocation Engines */
+        /* Group Management Modifications Engines */
         function createNewGroup(subject) {
             const inputField = document.getElementById(`${subject}-new-group-name`);
             const groupName = inputField.value.trim();
@@ -305,6 +331,56 @@
 
             subGroupsMap[subject].push(groupName);
             inputField.value = "";
+            saveData();
+            render();
+        }
+
+        function renameGroup(subject, oldName, event) {
+            event.stopPropagation(); // Avoid triggering tab swap filters
+            const newName = prompt(`Enter a new name for the group "${oldName}":`, oldName);
+            if (!newName || newName.trim() === "" || newName.trim() === oldName) return;
+
+            const cleanNewName = newName.trim();
+
+            if (subGroupsMap[subject].map(g => g.toLowerCase()).includes(cleanNewName.toLowerCase())) {
+                alert("A group with that name already exists.");
+                return;
+            }
+
+            // Update configuration array list pointer mappings
+            const groupIndex = subGroupsMap[subject].indexOf(oldName);
+            if (groupIndex !== -1) subGroupsMap[subject][groupIndex] = cleanNewName;
+
+            // Globally shift active data elements containing references
+            trackerData[subject].forEach(topic => {
+                if (topic.group === oldName) topic.group = cleanNewName;
+            });
+
+            if (activeGroupFilters[subject] === oldName) activeGroupFilters[subject] = cleanNewName;
+
+            saveData();
+            render();
+        }
+
+        function deleteGroup(subject, groupName, event) {
+            event.stopPropagation(); // Stop parent bubble event actions
+            if (groupName === "General") {
+                alert("The core 'General' group block cannot be deleted.");
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete the group "${groupName}"? Your items will be safely shifted back to 'General'.`)) return;
+
+            // Strip from configurations array cleanly
+            subGroupsMap[subject] = subGroupsMap[subject].filter(g => g !== groupName);
+
+            // Cascade values update sequence maps
+            trackerData[subject].forEach(topic => {
+                if (topic.group === groupName) topic.group = "General";
+            });
+
+            if (activeGroupFilters[subject] === groupName) activeGroupFilters[subject] = "ALL";
+
             saveData();
             render();
         }
@@ -382,17 +458,9 @@
             render();
         }
 
-        /* 
-           Hardware JS File Backup System Engines
-           Generates real, executable text attachment downloads containing deep-cloned state structures
-        */
+        /* JS File Storage Export / Import Methods */
         function exportToJSFile() {
-            const packageData = {
-                trackerData: trackerData,
-                subGroupsMap: subGroupsMap
-            };
-            
-            // Build pseudo download anchor node reference pointing to virtual code string
+            const packageData = { trackerData: trackerData, subGroupsMap: subGroupsMap };
             const dataString = "const sscBackupData = " + JSON.stringify(packageData) + ";";
             const blob = new Blob([dataString], { type: "application/javascript" });
             const url = URL.createObjectURL(blob);
@@ -409,7 +477,7 @@
         function importFromJSFile() {
             const fileInput = document.getElementById("upload-backup-file");
             if (fileInput.files.length === 0) {
-                alert("Please tap 'Choose File' and select your saved 'ssc_syllabus_backup.js' file first.");
+                alert("Please select your saved 'ssc_syllabus_backup.js' file first.");
                 return;
             }
 
@@ -419,7 +487,6 @@
             reader.onload = function(e) {
                 try {
                     const rawContent = e.target.result;
-                    // Extract structured data string cleanly out of JS file wrapper formatting boundaries
                     const jsonString = rawContent.replace("const sscBackupData = ", "").replace(/;$/, "").trim();
                     const parsedPackage = JSON.parse(jsonString);
 
@@ -428,18 +495,16 @@
                         subGroupsMap = parsedPackage.subGroupsMap;
                         saveData();
                         render();
-                        alert("Syllabus database successfully fully restored from file!");
-                    } else {
-                        alert("Error: Missing internal database structural arrays.");
+                        alert("Syllabus successfully loaded!");
                     }
                 } catch (err) {
-                    alert("Failed to parse file. Make sure it is a valid backup generated from this tracker app.");
+                    alert("Failed to parse file structural format arrays.");
                 }
             };
             reader.readAsText(file);
         }
 
-        /* Rendering Canvas Controls Engine */
+        /* Graphics Layout Synchronization Mapping Logic */
         function render() {
             const subjects = ['english', 'maths', 'reasoning', 'ga'];
             document.getElementById('global-sort-toggle').checked = autoSortActive;
@@ -454,34 +519,41 @@
                 groupsBar.innerHTML = "";
                 selectDropdown.innerHTML = "";
 
-                // Populate context input selection mapping references
+                // Synced Selector matching active target filter configurations maps
+                const activeFilter = activeGroupFilters[subject];
+
+                // Dynamically build selection list dropdown options maps
                 subGroupsMap[subject].forEach(group => {
                     const opt = document.createElement('option');
                     opt.value = group;
                     opt.innerText = group;
+                    
+                    // SMART AUTOMATION LINK: If looking at a group tab, force drop-down default options selection match
+                    if (activeFilter !== "ALL" && group === activeFilter) {
+                        opt.selected = true;
+                    }
                     selectDropdown.appendChild(opt);
                 });
 
-                // Draw wrapping sub-group row buttons layout frame nodes
-                const activeFilter = activeGroupFilters[subject];
-                
-                const allBtn = document.createElement('button');
-                allBtn.className = `group-btn all-btn ${activeFilter === 'ALL' ? 'active' : ''}`;
-                allBtn.innerText = "Show All Topics";
-                allBtn.onclick = () => filterByGroup(subject, 'ALL');
-                groupsBar.appendChild(allBtn);
+                // Render parent filter buttons setup frames
+                const allWrapper = document.createElement('div');
+                allWrapper.className = `group-pill-wrapper ${activeFilter === 'ALL' ? 'active' : ''}`;
+                allWrapper.innerHTML = `<button class="group-btn" onclick="filterByGroup('${subject}', 'ALL')">Show All</button>`;
+                groupsBar.appendChild(allWrapper);
 
                 subGroupsMap[subject].forEach(group => {
-                    const gBtn = document.createElement('button');
-                    gBtn.className = `group-btn ${activeFilter === group ? 'active' : ''}`;
-                    gBtn.innerText = group;
-                    gBtn.onclick = () => filterByGroup(subject, group);
-                    groupsBar.appendChild(gBtn);
+                    const pillWrapper = document.createElement('div');
+                    pillWrapper.className = `group-pill-wrapper ${activeFilter === group ? 'active' : ''}`;
+                    
+                    pillWrapper.innerHTML = `
+                        <button class="group-btn" onclick="filterByGroup('${subject}', '${group}')">${group}</button>
+                        <button class="pill-action-btn" onclick="renameGroup('${subject}', '${group}', event)" title="Rename Group">✎</button>
+                        ${group !== 'General' ? `<button class="pill-action-btn" onclick="deleteGroup('${subject}', '${group}', event)" style="color: #ff7675;" title="Delete Group">×</button>` : ''}
+                    `;
+                    groupsBar.appendChild(pillWrapper);
                 });
 
                 let topicsList = trackerData[subject];
-
-                // Execute baseline mathematical formulation calculation sequence
                 let average = 0;
                 if (topicsList.length > 0) {
                     const total = topicsList.reduce((sum, item) => sum + item.questions, 0);
@@ -489,10 +561,8 @@
                 }
                 baselineElement.innerText = `Avg: ${average.toFixed(1)}`;
 
-                // Deep clone array element state scopes to isolate execution path index anomalies
                 let outputItems = topicsList.map((item, idx) => ({ ...item, pointerIndex: idx }));
 
-                // Filter items down to match open sub-tab context focus before sorting layouts
                 if (activeFilter !== "ALL") {
                     outputItems = outputItems.filter(item => item.group === activeFilter);
                 }
@@ -506,12 +576,10 @@
 
                 outputItems.forEach((topic) => {
                     const li = document.createElement('li');
-                    
                     if (topic.questions === 0) li.className = "topic-item status-untouched";
                     else if (topic.questions < average) li.className = "topic-item status-below-avg";
                     else li.className = "topic-item status-good";
 
-                    // Render touch item block nodes with embedded subgroup data tags
                     li.innerHTML = `
                         <div class="topic-main-row">
                             <div class="topic-meta">
