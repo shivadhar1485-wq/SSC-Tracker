@@ -77,8 +77,8 @@
             background: #e2e8f0;
             border: 1px solid #cbd5e1;
             border-radius: 20px;
-            padding: 2px 4px 2px 10px;
-            gap: 4px;
+            padding: 6px 14px;
+            cursor: pointer;
         }
 
         .group-pill-wrapper.active {
@@ -94,32 +94,25 @@
             font-weight: 600;
             color: #475569;
             cursor: pointer;
-            padding: 4px 0;
+            padding: 0;
         }
 
         .group-pill-wrapper.active .group-btn { color: white; }
 
-        .pill-action-btn {
-            background: transparent;
-            border: none;
-            font-size: 0.75rem;
-            cursor: pointer;
-            color: #94a3b8;
-            padding: 2px 4px;
-            border-radius: 50%;
-        }
-
-        .group-pill-wrapper.active .pill-action-btn { color: rgba(255, 255, 255, 0.7); }
-        .pill-action-btn:hover { background: rgba(0,0,0,0.08); }
-
-        .group-creation-panel {
+        .panel-box {
             background: #edf2f7;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
             margin-bottom: 15px;
             border: 1px dashed #cbd5e1;
         }
-        .group-creation-panel h4 { margin: 0 0 8px 0; font-size: 0.85rem; color: #4a5568; }
+        .panel-box h4 { margin: 0 0 8px 0; font-size: 0.85rem; color: #4a5568; }
+
+        /* Settings management list items styling */
+        .mgmt-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; padding: 0; list-style: none;}
+        .mgmt-item { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.8rem; font-weight: 600;}
+        .mgmt-actions { display: flex; gap: 4px; }
+        .btn-mgmt-action { background: none; border: none; font-size: 0.9rem; cursor: pointer; padding: 2px 6px; }
 
         .subject-card { background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); padding: 15px; display: none; }
         .subject-card.active { display: flex; flex-direction: column; }
@@ -138,7 +131,7 @@
         .input-group { display: flex; gap: 6px; margin-bottom: 12px; }
         .input-group input, .input-group select { padding: 10px; font-size: 0.9rem; border: 1px solid var(--border-color); border-radius: 8px; outline: none; }
         .input-group input { flex: 1; }
-        .input-group select { background: white; max-width: 110px; font-size: 0.8rem; font-weight: 600; }
+        .input-group select { background: white; max-width: 120px; font-size: 0.8rem; font-weight: 600; }
         .input-group button { background: var(--primary-purple); color: white; border: none; padding: 0 14px; font-size: 1.1rem; border-radius: 8px; }
 
         .topic-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
@@ -149,7 +142,7 @@
 
         .topic-main-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .topic-meta { display: flex; flex-direction: column; gap: 2px; flex: 1; }
-        .topic-inline-heading { display: flex; align-items: center; gap: 6px; }
+        .topic-inline-heading { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
         .topic-name { font-weight: 600; font-size: 0.95rem; word-break: break-word; }
         .group-tag-label { font-size: 0.7rem; background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
         
@@ -159,7 +152,7 @@
 
         .mobile-controls-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.35); padding: 5px; border-radius: 6px; gap: 4px; }
         .move-actions { display: flex; gap: 2px; }
-        .btn-move { background: rgba(0, 0, 0, 0.05); border: none; padding: 6px 8px; font-size: 0.8rem; border-radius: 4px; font-weight: bold; }
+        .btn-move { background: #ffffff; border: 1px solid rgba(0,0,0,0.1); padding: 6px 12px; font-size: 0.85rem; border-radius: 4px; font-weight: bold; display: flex; align-items: center; justify-content: center; min-height: 36px;}
         .q-counter-box { display: flex; align-items: center; gap: 4px; margin-left: auto; }
         .btn-q { background: #ffffff; border: 1px solid rgba(0,0,0,0.15); min-width: 36px; height: 36px; font-size: 0.85rem; font-weight: bold; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
         .q-count { min-width: 40px; text-align: center; font-weight: bold; font-size: 0.95rem; }
@@ -176,10 +169,11 @@
 
     <header>
         <h1>SSC Syllabus Tracker</h1>
-        <p>Clipboard Backup & Sub-Group Sync Workspace</p>
+        <p>Polished Modular Alignment Workspace</p>
     </header>
 
     <div class="container">
+        <!-- Main Subject Selector Tabs -->
         <div class="tabs-nav">
             <button class="tab-btn active" id="btn-tab-english" onclick="switchTab('english')">English</button>
             <button class="tab-btn" id="btn-tab-maths" onclick="switchTab('maths')">Maths</button>
@@ -195,69 +189,83 @@
             </label>
         </div>
 
+        <!-- Subject Panels Loop -->
         <div class="subject-card active" id="english-card">
             <div class="subject-header"><h2 class="subject-title">English</h2><span class="baseline-badge" id="english-baseline">Avg: 0</span></div>
             <div class="sub-group-bar" id="english-groups-bar"></div>
-            <div class="group-creation-panel">
-                <h4>Create Group (e.g., Grammar, Vocab)</h4>
-                <div class="input-group"><input type="text" id="english-new-group-name" placeholder="Group name..."><button onclick="createNewGroup('english')">Add Group</button></div>
-            </div>
+            
             <div class="input-group">
                 <input type="text" id="english-input" placeholder="Topic title...">
-                <select id="english-group-select"><option value="General">General</option></select>
+                <select id="english-group-select"><option value="">No Group</option></select>
                 <button onclick="addTopic('english')">+</button>
             </div>
             <ul class="topic-list" id="english-list"></ul>
+            
+            <div class="panel-box" style="margin-top:20px;">
+                <h4>Group Management Dashboard</h4>
+                <div class="input-group"><input type="text" id="english-new-group-name" placeholder="New group name..."><button onclick="createNewGroup('english')">Add</button></div>
+                <ul class="mgmt-list" id="english-mgmt-list"></ul>
+            </div>
         </div>
 
         <div class="subject-card" id="maths-card">
             <div class="subject-header"><h2 class="subject-title">Maths</h2><span class="baseline-badge" id="maths-baseline">Avg: 0</span></div>
             <div class="sub-group-bar" id="maths-groups-bar"></div>
-            <div class="group-creation-panel">
-                <h4>Create Group (e.g., Arithmetic, Advance)</h4>
-                <div class="input-group"><input type="text" id="maths-new-group-name" placeholder="Group name..."><button onclick="createNewGroup('maths')">Add Group</button></div>
-            </div>
+            
             <div class="input-group">
                 <input type="text" id="maths-input" placeholder="Topic title...">
-                <select id="maths-group-select"><option value="General">General</option></select>
+                <select id="maths-group-select"><option value="">No Group</option></select>
                 <button onclick="addTopic('maths')">+</button>
             </div>
             <ul class="topic-list" id="maths-list"></ul>
+            
+            <div class="panel-box" style="margin-top:20px;">
+                <h4>Group Management Dashboard</h4>
+                <div class="input-group"><input type="text" id="maths-new-group-name" placeholder="New group name..."><button onclick="createNewGroup('maths')">Add</button></div>
+                <ul class="mgmt-list" id="maths-mgmt-list"></ul>
+            </div>
         </div>
 
         <div class="subject-card" id="reasoning-card">
             <div class="subject-header"><h2 class="subject-title">Reasoning</h2><span class="baseline-badge" id="reasoning-baseline">Avg: 0</span></div>
             <div class="sub-group-bar" id="reasoning-groups-bar"></div>
-            <div class="group-creation-panel">
-                <h4>Create Group (e.g., Verbal, Non-Verbal)</h4>
-                <div class="input-group"><input type="text" id="reasoning-new-group-name" placeholder="Group name..."><button onclick="createNewGroup('reasoning')">Add Group</button></div>
-            </div>
+            
             <div class="input-group">
                 <input type="text" id="reasoning-input" placeholder="Topic title...">
-                <select id="reasoning-group-select"><option value="General">General</option></select>
+                <select id="reasoning-group-select"><option value="">No Group</option></select>
                 <button onclick="addTopic('reasoning')">+</button>
             </div>
             <ul class="topic-list" id="reasoning-list"></ul>
+            
+            <div class="panel-box" style="margin-top:20px;">
+                <h4>Group Management Dashboard</h4>
+                <div class="input-group"><input type="text" id="reasoning-new-group-name" placeholder="New group name..."><button onclick="createNewGroup('reasoning')">Add</button></div>
+                <ul class="mgmt-list" id="reasoning-mgmt-list"></ul>
+            </div>
         </div>
 
         <div class="subject-card" id="ga-card">
             <div class="subject-header"><h2 class="subject-title">General Awareness</h2><span class="baseline-badge" id="ga-baseline">Avg: 0</span></div>
             <div class="sub-group-bar" id="ga-groups-bar"></div>
-            <div class="group-creation-panel">
-                <h4>Create Group (e.g., History, Geo, Polity)</h4>
-                <div class="input-group"><input type="text" id="ga-new-group-name" placeholder="Group name..."><button onclick="createNewGroup('ga')">Add Group</button></div>
-            </div>
+            
             <div class="input-group">
                 <input type="text" id="ga-input" placeholder="Topic title...">
-                <select id="ga-group-select"><option value="General">General</option></select>
+                <select id="ga-group-select"><option value="">No Group</option></select>
                 <button onclick="addTopic('ga')">+</button>
             </div>
             <ul class="topic-list" id="ga-list"></ul>
+            
+            <div class="panel-box" style="margin-top:20px;">
+                <h4>Group Management Dashboard</h4>
+                <div class="input-group"><input type="text" id="ga-new-group-name" placeholder="New group name..."><button onclick="createNewGroup('ga')">Add</button></div>
+                <ul class="mgmt-list" id="ga-mgmt-list"></ul>
+            </div>
         </div>
 
+        <!-- Clipboard Storage Backup Panel Box -->
         <div class="backup-card">
             <h3>Fail-Safe Clipboard Backup Guard</h3>
-            <textarea id="backup-code-box" class="backup-textarea" placeholder="Your tracker's data code snippet will display here automatically..." readonly onclick="this.select();"></textarea>
+            <textarea id="backup-code-box" class="backup-textarea" placeholder="Your data snippet string code configuration is updated automatically..." readonly onclick="this.select();"></textarea>
             <div class="backup-btn-group">
                 <button class="btn-backup" onclick="copyBackupToClipboard()">Copy Backup Code</button>
                 <button class="btn-backup restore" onclick="pasteRestoreFromClipboard()">Paste & Restore Code</button>
@@ -266,22 +274,22 @@
     </div>
 
     <script>
-        let trackerData = JSON.parse(localStorage.getItem('sscV7_Data')) || {
+        let trackerData = JSON.parse(localStorage.getItem('sscV8_Data')) || {
             english: [], maths: [], reasoning: [], ga: []
         };
 
-        let subGroupsMap = JSON.parse(localStorage.getItem('sscV7_Groups')) || {
-            english: ["General"], maths: ["General"], reasoning: ["General"], ga: ["General"]
+        let subGroupsMap = JSON.parse(localStorage.getItem('sscV8_Groups')) || {
+            english: [], maths: [], reasoning: [], ga: []
         };
 
         let activeGroupFilters = { english: "ALL", maths: "ALL", reasoning: "ALL", ga: "ALL" };
-        let autoSortActive = JSON.parse(localStorage.getItem('sscV7_Sort')) || false;
+        let autoSortActive = JSON.parse(localStorage.getItem('sscV8_Sort')) || false;
         let currentTab = 'english';
 
         function saveData() {
-            localStorage.setItem('sscV7_Data', JSON.stringify(trackerData));
-            localStorage.setItem('sscV7_Groups', JSON.stringify(subGroupsMap));
-            localStorage.setItem('sscV7_Sort', JSON.stringify(autoSortActive));
+            localStorage.setItem('sscV8_Data', JSON.stringify(trackerData));
+            localStorage.setItem('sscV8_Groups', JSON.stringify(subGroupsMap));
+            localStorage.setItem('sscV8_Sort', JSON.stringify(autoSortActive));
             updateBackupCodeBoxState();
         }
 
@@ -313,29 +321,26 @@
             render();
         }
 
-        function renameGroup(subject, oldName, event) {
-            event.stopPropagation();
-            const newName = prompt(`Enter a new name for the group "${oldName}":`, oldName);
+        function renameGroup(subject, oldName) {
+            const newName = prompt(`Rename the group "${oldName}" to:`, oldName);
             if (!newName || newName.trim() === "" || newName.trim() === oldName) return;
             const cleanNewName = newName.trim();
             if (subGroupsMap[subject].map(g => g.toLowerCase()).includes(cleanNewName.toLowerCase())) {
                 alert("A group with that name already exists.");
                 return;
             }
-            const groupIndex = subGroupsMap[subject].indexOf(oldName);
-            if (groupIndex !== -1) subGroupsMap[subject][groupIndex] = cleanNewName;
+            const idx = subGroupsMap[subject].indexOf(oldName);
+            if (idx !== -1) subGroupsMap[subject][idx] = cleanNewName;
             trackerData[subject].forEach(topic => { if (topic.group === oldName) topic.group = cleanNewName; });
             if (activeGroupFilters[subject] === oldName) activeGroupFilters[subject] = cleanNewName;
             saveData();
             render();
         }
 
-        function deleteGroup(subject, groupName, event) {
-            event.stopPropagation();
-            if (groupName === "General") return alert("The 'General' group cannot be deleted.");
-            if (!confirm(`Are you sure you want to delete "${groupName}"? Topics inside it will safely move to 'General'.`)) return;
+        function deleteGroup(subject, groupName) {
+            if (!confirm(`Are you sure you want to delete "${groupName}"? Linked items will simply lose their group tag safely.`)) return;
             subGroupsMap[subject] = subGroupsMap[subject].filter(g => g !== groupName);
-            trackerData[subject].forEach(topic => { if (topic.group === groupName) topic.group = "General"; });
+            trackerData[subject].forEach(topic => { if (topic.group === groupName) topic.group = ""; });
             if (activeGroupFilters[subject] === groupName) activeGroupFilters[subject] = "ALL";
             saveData();
             render();
@@ -391,12 +396,35 @@
             input.focus();
         }
 
-        function moveItem(subject, index, direction) {
-            const targetIndex = index + direction;
-            if (targetIndex < 0 || targetIndex >= trackerData[subject].length) return;
-            const temp = trackerData[subject][index];
-            trackerData[subject][index] = trackerData[subject][targetIndex];
-            trackerData[subject][targetIndex] = temp;
+        /* 
+           Unrestricted Modular Move Engine:
+           Locates the true array position of the target item inside your global data array list,
+           and swaps its position with the next matching filtered sibling array index block.
+        */
+        function moveItemInFilterContext(subject, pointerIndex, direction, currentFilter) {
+            const globalList = trackerData[subject];
+            
+            // Generate matching index map pointers list
+            let filteredIndices = [];
+            globalList.forEach((item, idx) => {
+                if (currentFilter === "ALL" || item.group === currentFilter) {
+                    filteredIndices.push(idx);
+                }
+            });
+
+            const positionalIndex = filteredIndices.indexOf(pointerIndex);
+            if (positionalIndex === -1) return;
+
+            const targetPositionalIndex = positionalIndex + direction;
+            if (targetPositionalIndex < 0 || targetPositionalIndex >= filteredIndices.length) return;
+
+            const targetGlobalIndex = filteredIndices[targetPositionalIndex];
+
+            // Perform structural array node cell data values swapping sequence
+            const temp = globalList[pointerIndex];
+            globalList[pointerIndex] = globalList[targetGlobalIndex];
+            globalList[targetGlobalIndex] = temp;
+
             saveData();
             render();
         }
@@ -409,53 +437,30 @@
         function copyBackupToClipboard() {
             updateBackupCodeBoxState();
             const box = document.getElementById('backup-code-box');
-            box.select();
-            box.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(box.value).then(() => {
-                alert("Syllabus data snippet code copied to clipboard!");
-            }).catch(() => {
-                alert("Tap and hold inside the box to manually copy the text.");
-            });
+            box.select(); box.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(box.value).then(() => { alert("Syllabus backup code copied!"); });
         }
 
-        /* SMART RECOVERY SYSTEM
-           Accepts BOTH the new Base64 text and your raw old text string directly!
-        */
         function pasteRestoreFromClipboard() {
-            let input = prompt("Paste your backup string here:");
+            let input = prompt("Paste backup string code snippet text here:");
             if (!input || input.trim() === "") return;
             input = input.trim();
-
             let parsedData;
             try {
-                // Scenario A: Check if it's the raw text string from the old file layout
                 let clearText = input;
                 if (clearText.startsWith("const sscBackupData = ")) {
                     clearText = clearText.replace("const sscBackupData = ", "");
-                    if (clearText.endsWith(";")) {
-                        clearText = clearText.slice(0, -1);
-                    }
+                    if (clearText.endsWith(";")) clearText = clearText.slice(0, -1);
                 }
-
-                if (clearText.startsWith("{")) {
-                    parsedData = JSON.parse(clearText);
-                } else {
-                    // Scenario B: Treat it as a modern Base64 encrypted snippet string
-                    parsedData = JSON.parse(decodeURIComponent(atob(input)));
-                }
+                if (clearText.startsWith("{")) parsedData = JSON.parse(clearText);
+                else parsedData = JSON.parse(decodeURIComponent(atob(input)));
 
                 if (parsedData.trackerData && parsedData.subGroupsMap) {
                     trackerData = parsedData.trackerData;
                     subGroupsMap = parsedData.subGroupsMap;
-                    saveData();
-                    render();
-                    alert("Syllabus successfully fully restored from your text backup!");
-                } else {
-                    alert("Data structure is missing key components.");
+                    saveData(); render(); alert("Syllabus fully recovered!");
                 }
-            } catch (err) {
-                alert("Failed to parse this data string. Make sure you copied the full snippet.");
-            }
+            } catch (err) { alert("Failed to read snippet string data configuration details."); }
         }
 
         function render() {
@@ -467,9 +472,15 @@
                 const baselineElement = document.getElementById(`${subject}-baseline`);
                 const groupsBar = document.getElementById(`${subject}-groups-bar`);
                 const selectDropdown = document.getElementById(`${subject}-group-select`);
+                const mgmtList = document.getElementById(`${subject}-mgmt-list`);
                 
-                listElement.innerHTML = ""; groupsBar.innerHTML = ""; selectDropdown.innerHTML = "";
+                listElement.innerHTML = ""; groupsBar.innerHTML = ""; selectDropdown.innerHTML = ""; mgmtList.innerHTML = "";
                 const activeFilter = activeGroupFilters[subject];
+
+                // Base drop-down choices defaults assignment setup
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = ""; defaultOpt.innerText = "No Group";
+                selectDropdown.appendChild(defaultOpt);
 
                 subGroupsMap[subject].forEach(group => {
                     const opt = document.createElement('option');
@@ -478,6 +489,7 @@
                     selectDropdown.appendChild(opt);
                 });
 
+                // Display Filter Tabs Pills Generator
                 const allWrapper = document.createElement('div');
                 allWrapper.className = `group-pill-wrapper ${activeFilter === 'ALL' ? 'active' : ''}`;
                 allWrapper.innerHTML = `<button class="group-btn" onclick="filterByGroup('${subject}', 'ALL')">Show All</button>`;
@@ -486,12 +498,20 @@
                 subGroupsMap[subject].forEach(group => {
                     const pillWrapper = document.createElement('div');
                     pillWrapper.className = `group-pill-wrapper ${activeFilter === group ? 'active' : ''}`;
-                    pillWrapper.innerHTML = `
-                        <button class="group-btn" onclick="filterByGroup('${subject}', '${group}')">${group}</button>
-                        <button class="pill-action-btn" onclick="renameGroup('${subject}', '${group}', event)">✎</button>
-                        ${group !== 'General' ? `<button class="pill-action-btn" onclick="deleteGroup('${subject}', '${group}', event)" style="color: #ff7675;">×</button>` : ''}
-                    `;
+                    pillWrapper.innerHTML = `<button class="group-btn" onclick="filterByGroup('${subject}', '${group}')">${group}</button>`;
                     groupsBar.appendChild(pillWrapper);
+
+                    // Build Management rows list dashboard item cells safely
+                    const mLi = document.createElement('li');
+                    mLi.className = "mgmt-item";
+                    mLi.innerHTML = `
+                        <span>${group}</span>
+                        <div class="mgmt-actions">
+                            <button class="btn-mgmt-action" onclick="renameGroup('${subject}', '${group}')" style="color:#2c3e50;">✎</button>
+                            <button class="btn-mgmt-action" onclick="deleteGroup('${subject}', '${group}')" style="color:#ff7675;">×</button>
+                        </div>
+                    `;
+                    mgmtList.appendChild(mLi);
                 });
 
                 let topicsList = trackerData[subject];
@@ -523,7 +543,7 @@
                             <div class="topic-meta">
                                 <div class="topic-inline-heading">
                                     <span class="topic-name" id="text-${subject}-${topic.pointerIndex}">${topic.name}</span>
-                                    <span class="group-tag-label">${topic.group || 'General'}</span>
+                                    ${topic.group ? `<span class="group-tag-label">${topic.group}</span>` : ''}
                                 </div>
                             </div>
                             <div class="action-row-buttons">
@@ -532,10 +552,10 @@
                             </div>
                         </div>
                         <div class="mobile-controls-row">
-                            ${!autoSortActive && activeFilter === 'ALL' ? `
+                            ${!autoSortActive ? `
                             <div class="move-actions">
-                                <button class="btn-move" onclick="moveItem('${subject}', ${topic.pointerIndex}, -1)">▲</button>
-                                <button class="btn-move" onclick="moveItem('${subject}', ${topic.pointerIndex}, 1)">▼</button>
+                                <button class="btn-move" onclick="moveItemInFilterContext('${subject}', ${topic.pointerIndex}, -1, '${activeFilter}')">▲</button>
+                                <button class="btn-move" onclick="moveItemInFilterContext('${subject}', ${topic.pointerIndex}, 1, '${activeFilter}')">▼</button>
                             </div>` : ''}
                             <div class="q-counter-box">
                                 <button class="btn-q" onclick="updateCount('${subject}', ${topic.pointerIndex}, -5)">-5</button>
