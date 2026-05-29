@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSC Syllabus Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SSC Syllabus Tracker (Mobile)</title>
     <style>
         :root {
-            --bg-color: #f4f7f6;
+            --bg-color: #f1f2f6;
             --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #e0e0e0;
+            --text-color: #2d3436;
+            --border-color: #dfe6e9;
             --primary-purple: #6c5ce7;
             --primary-light: #a29bfe;
             --flag-red: #ff7675;
@@ -17,74 +17,75 @@
             --flag-green: #55efc4;
         }
 
+        /* Mobile-first structural resetting */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: 12px;
+            -webkit-tap-highlight-color: transparent;
         }
 
         header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
         h1 {
+            font-size: 1.5rem;
             color: var(--primary-purple);
-            margin-bottom: 5px;
+            margin: 5px 0;
+        }
+
+        p {
+            font-size: 0.85rem;
+            margin: 0;
+            color: #636e72;
         }
 
         .container {
-            max-width: 850px;
+            width: 100%;
+            max-width: 500px;
             margin: 0 auto;
         }
 
-        /* Tabs Navigation */
+        /* Mobile Swipe/Scroll friendly Tab View */
         .tabs-nav {
             display: flex;
-            gap: 5px;
-            margin-bottom: -2px;
-            overflow-x: auto;
+            background: #dfe6e9;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 15px;
+            gap: 2px;
         }
 
         .tab-btn {
             flex: 1;
-            background-color: #e0e0e0;
-            border: 2px solid var(--border-color);
-            border-bottom: none;
-            padding: 12px 15px;
-            font-size: 1rem;
+            background: transparent;
+            border: none;
+            padding: 10px 5px;
+            font-size: 0.9rem;
             font-weight: bold;
-            color: #666;
+            color: #555;
             cursor: pointer;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
+            border-radius: 6px;
             transition: all 0.2s ease;
             text-align: center;
-            white-space: nowrap;
-        }
-
-        .tab-btn:hover {
-            background-color: #ededed;
-            color: var(--text-color);
         }
 
         .tab-btn.active {
             background-color: var(--card-bg);
             color: var(--primary-purple);
-            border-color: var(--primary-purple) var(--primary-purple) transparent var(--primary-purple);
-            border-top: 4px solid var(--primary-purple);
-            padding-top: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
-        /* Subject Content Card */
+        /* Core Subject Container Window */
         .subject-card {
             background: var(--card-bg);
-            border-radius: 0 0 8px 8px;
-            border: 2px solid var(--primary-purple);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
-            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+            padding: 15px;
             display: none;
         }
 
@@ -97,116 +98,86 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--bg-color);
-            padding-bottom: 12px;
-            flex-wrap: wrap;
-            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
         }
 
         .subject-title {
             margin: 0;
-            font-size: 1.6rem;
-            color: var(--primary-purple);
-        }
-
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            font-size: 1.2rem;
         }
 
         .baseline-badge {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             background: var(--bg-color);
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 6px;
             font-weight: bold;
-            border: 1px solid var(--border-color);
         }
 
-        /* Toggle Button Custom Styling */
+        /* Global Toggle Controls */
         .toggle-container {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
+            justify-content: space-between;
+            background: var(--bg-color);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
             font-weight: 600;
-            cursor: pointer;
         }
 
         .toggle-switch {
             position: relative;
             display: inline-block;
-            width: 44px;
-            height: 22px;
+            width: 40px;
+            height: 20px;
         }
 
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
 
         .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc;
-            transition: .3s;
-            border-radius: 22px;
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #b2bec3; transition: .2s; border-radius: 20px;
         }
 
         .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
+            position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px;
+            background-color: white; transition: .2s; border-radius: 50%;
         }
 
-        input:checked + .slider {
-            background-color: var(--primary-purple);
-        }
+        input:checked + .slider { background-color: var(--primary-purple); }
+        input:checked + .slider:before { transform: translateX(20px); }
 
-        input:checked + .slider:before {
-            transform: translateX(22px);
-        }
-
+        /* Input Block */
         .input-group {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
         .input-group input {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             font-size: 1rem;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 8px;
             outline: none;
-        }
-
-        .input-group input:focus {
-            border-color: var(--primary-light);
         }
 
         .input-group button {
             background: var(--primary-purple);
             color: white;
             border: none;
-            padding: 0 20px;
+            padding: 0 16px;
             font-size: 1.2rem;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
         }
 
+        /* Mobile Dynamic Topic List Layout */
         .topic-list {
             list-style: none;
             padding: 0;
@@ -218,143 +189,140 @@
 
         .topic-item {
             display: flex;
+            flex-direction: column;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            gap: 10px;
+        }
+
+        /* Color States */
+        .status-untouched { background-color: var(--flag-red); border-color: #e17055; }
+        .status-below-avg { background-color: var(--flag-yellow); border-color: #eccc68; }
+        .status-good { background-color: var(--flag-green); border-color: #2ed573; }
+
+        .topic-main-row {
+            display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 15px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            transition: background-color 0.2s ease;
-            background-color: var(--card-bg);
+            width: 100%;
         }
 
-        /* Drag States */
-        .topic-item.draggable {
-            cursor: grab;
-        }
-        .topic-item.draggable:active {
-            cursor: grabbing;
-        }
-        .topic-item.dragging {
-            opacity: 0.4;
-            border: 2px dashed #666;
-        }
-
-        /* Flagging Colors */
-        .status-untouched { background-color: var(--flag-red); border-color: #d63031; }
-        .status-below-avg { background-color: var(--flag-yellow); border-color: #fdcb6e; }
-        .status-good { background-color: var(--flag-green); border-color: #00b894; }
-
-        .topic-info {
+        .topic-meta {
             display: flex;
             align-items: center;
             gap: 8px;
             flex: 1;
-            margin-right: 15px;
-        }
-
-        .drag-handle {
-            color: rgba(0,0,0,0.3);
-            font-size: 1.2rem;
-            margin-right: 5px;
-            user-select: none;
         }
 
         .topic-name {
             font-weight: 600;
-            font-size: 1.05rem;
-            cursor: text;
+            font-size: 1rem;
+            word-break: break-word;
         }
 
         .edit-input {
-            font-family: inherit;
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 600;
-            padding: 3px 6px;
-            border: 1px solid var(--primary-purple);
-            border-radius: 4px;
-            outline: none;
+            padding: 5px;
+            border: 2px solid var(--primary-purple);
+            border-radius: 6px;
             width: 80%;
+            outline: none;
         }
 
-        .btn-edit-trigger {
+        .action-icon-btn {
             background: transparent;
             border: none;
-            color: rgba(0,0,0,0.4);
+            font-size: 1.1rem;
+            padding: 4px 8px;
             cursor: pointer;
+        }
+
+        /* Large, Easy-Touch Buttons for Mobile Practice Increments */
+        .mobile-controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 6px;
+            border-radius: 6px;
+            gap: 4px;
+        }
+
+        .move-actions {
+            display: flex;
+            gap: 2px;
+        }
+
+        .btn-move {
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            padding: 6px 10px;
             font-size: 0.85rem;
-            padding: 2px 5px;
-            transition: color 0.2s;
+            border-radius: 4px;
+            font-weight: bold;
         }
 
-        .btn-edit-trigger:hover {
-            color: var(--primary-purple);
-        }
-
-        .question-controls {
+        .q-counter-box {
             display: flex;
             align-items: center;
-            gap: 6px;
-        }
-
-        .q-count {
-            width: 55px;
-            text-align: center;
-            font-weight: bold;
-            border: 1px solid rgba(0,0,0,0.15);
-            background: rgba(255,255,255,0.6);
-            border-radius: 4px;
-            padding: 4px 2px;
+            gap: 4px;
+            margin-left: auto;
         }
 
         .btn-q {
-            background: rgba(255,255,255,0.7);
+            background: #ffffff;
             border: 1px solid rgba(0,0,0,0.15);
-            width: 32px;
-            height: 32px;
-            border-radius: 4px;
-            cursor: pointer;
+            min-width: 38px;
+            height: 38px;
+            font-size: 0.9rem;
             font-weight: bold;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .btn-q:hover { background: white; }
-        .btn-delete { background: transparent; border: none; color: #c0392b; cursor: pointer; font-size: 1.2rem; margin-left: 12px; }
-        .btn-delete:hover { color: #e74c3c; }
+        .q-count {
+            min-width: 45px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
 
     <header>
         <h1>SSC Syllabus Tracker</h1>
-        <p>Drag to reorder when Auto-Sort is Off. Click ✎ to rename.</p>
+        <p>Optimized for Mobile Touchscreens</p>
     </header>
 
     <div class="container">
         <div class="tabs-nav">
-            <button class="tab-btn active" onclick="switchTab('english')">English</button>
-            <button class="tab-btn" onclick="switchTab('maths')">Maths</button>
-            <button class="tab-btn" onclick="switchTab('reasoning')">Reasoning</button>
-            <button class="tab-btn" onclick="switchTab('ga')">GA</button>
+            <button class="tab-btn active" id="btn-tab-english" onclick="switchTab('english')">English</button>
+            <button class="tab-btn" id="btn-tab-maths" onclick="switchTab('maths')">Maths</button>
+            <button class="tab-btn" id="btn-tab-reasoning" onclick="switchTab('reasoning')">Reasoning</button>
+            <button class="tab-btn" id="btn-tab-ga" onclick="switchTab('ga')">GA</button>
+        </div>
+
+        <div class="toggle-container">
+            <span>Auto-Sort Priority Colors First</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="global-sort-toggle" onchange="toggleSort()">
+                <span class="slider"></span>
+            </label>
         </div>
 
         <div class="subject-card active" id="english-card">
             <div class="subject-header">
-                <h2 class="subject-title">English Language</h2>
-                <div class="header-controls">
-                    <label class="toggle-container">
-                        <span>Auto-Sort Colors</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="english-sort-toggle" onchange="toggleSort('english')">
-                            <span class="slider"></span>
-                        </div>
-                    </label>
-                    <span class="baseline-badge" id="english-baseline">Avg: 0</span>
-                </div>
+                <h2 class="subject-title">English</h2>
+                <span class="baseline-badge" id="english-baseline">Avg: 0</span>
             </div>
             <div class="input-group">
-                <input type="text" id="english-input" placeholder="Add English topic...">
+                <input type="text" id="english-input" placeholder="Enter topic title...">
                 <button onclick="addTopic('english')">+</button>
             </div>
             <ul class="topic-list" id="english-list"></ul>
@@ -362,20 +330,11 @@
 
         <div class="subject-card" id="maths-card">
             <div class="subject-header">
-                <h2 class="subject-title">Quantitative Aptitude</h2>
-                <div class="header-controls">
-                    <label class="toggle-container">
-                        <span>Auto-Sort Colors</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="maths-sort-toggle" onchange="toggleSort('maths')">
-                            <span class="slider"></span>
-                        </div>
-                    </label>
-                    <span class="baseline-badge" id="maths-baseline">Avg: 0</span>
-                </div>
+                <h2 class="subject-title">Maths</h2>
+                <span class="baseline-badge" id="maths-baseline">Avg: 0</span>
             </div>
             <div class="input-group">
-                <input type="text" id="maths-input" placeholder="Add Maths topic...">
+                <input type="text" id="maths-input" placeholder="Enter topic title...">
                 <button onclick="addTopic('maths')">+</button>
             </div>
             <ul class="topic-list" id="maths-list"></ul>
@@ -384,19 +343,10 @@
         <div class="subject-card" id="reasoning-card">
             <div class="subject-header">
                 <h2 class="subject-title">Reasoning</h2>
-                <div class="header-controls">
-                    <label class="toggle-container">
-                        <span>Auto-Sort Colors</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="reasoning-sort-toggle" onchange="toggleSort('reasoning')">
-                            <span class="slider"></span>
-                        </div>
-                    </label>
-                    <span class="baseline-badge" id="reasoning-baseline">Avg: 0</span>
-                </div>
+                <span class="baseline-badge" id="reasoning-baseline">Avg: 0</span>
             </div>
             <div class="input-group">
-                <input type="text" id="reasoning-input" placeholder="Add Reasoning topic...">
+                <input type="text" id="reasoning-input" placeholder="Enter topic title...">
                 <button onclick="addTopic('reasoning')">+</button>
             </div>
             <ul class="topic-list" id="reasoning-list"></ul>
@@ -405,19 +355,10 @@
         <div class="subject-card" id="ga-card">
             <div class="subject-header">
                 <h2 class="subject-title">General Awareness</h2>
-                <div class="header-controls">
-                    <label class="toggle-container">
-                        <span>Auto-Sort Colors</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="ga-sort-toggle" onchange="toggleSort('ga')">
-                            <span class="slider"></span>
-                        </div>
-                    </label>
-                    <span class="baseline-badge" id="ga-baseline">Avg: 0</span>
-                </div>
+                <span class="baseline-badge" id="ga-baseline">Avg: 0</span>
             </div>
             <div class="input-group">
-                <input type="text" id="ga-input" placeholder="Add GA topic...">
+                <input type="text" id="ga-input" placeholder="Enter topic title...">
                 <button onclick="addTopic('ga')">+</button>
             </div>
             <ul class="topic-list" id="ga-list"></ul>
@@ -425,214 +366,174 @@
     </div>
 
     <script>
-        // Data Structure State
-        let trackerData = JSON.parse(localStorage.getItem('sscTrackerData')) || {
+        // Secure, Stable Core Data Model
+        let trackerData = JSON.parse(localStorage.getItem('sscTrackerMobileData')) || {
             english: [], maths: [], reasoning: [], ga: []
         };
 
-        // Configuration State for Auto Sort Toggle
-        let sortConfigs = JSON.parse(localStorage.getItem('sscTrackerSortConfigs')) || {
-            english: false, maths: false, reasoning: false, ga: false
-        };
-
-        let currentActiveTab = 'english';
+        let autoSortActive = JSON.parse(localStorage.getItem('sscTrackerMobileSort')) || false;
+        let currentTab = 'english';
 
         function saveData() {
-            localStorage.setItem('sscTrackerData', JSON.stringify(trackerData));
-            localStorage.setItem('sscTrackerSortConfigs', JSON.stringify(sortConfigs));
+            localStorage.setItem('sscTrackerMobileData', JSON.stringify(trackerData));
+            localStorage.setItem('sscTrackerMobileSort', JSON.stringify(autoSortActive));
         }
 
         function switchTab(subject) {
-            currentActiveTab = subject;
+            currentTab = subject;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.subject-card').forEach(card => card.classList.remove('active'));
 
-            const targetIndex = ['english', 'maths', 'reasoning', 'ga'].indexOf(subject);
-            document.querySelectorAll('.tab-btn')[targetIndex].classList.add('active');
+            document.getElementById(`btn-tab-${subject}`).classList.add('active');
             document.getElementById(`${subject}-card`).classList.add('active');
         }
 
-        function toggleSort(subject) {
-            sortConfigs[subject] = document.getElementById(`${subject}-sort-toggle`).checked;
+        function toggleSort() {
+            autoSortActive = document.getElementById('global-sort-toggle').checked;
             saveData();
             render();
         }
 
         function addTopic(subject) {
             const inputField = document.getElementById(`${subject}-input`);
-            const topicName = inputField.value.trim();
-            if (topicName === "") return;
+            const name = inputField.value.trim();
+            if (!name) return;
 
-            if (trackerData[subject].some(t => t.name.toLowerCase() === topicName.toLowerCase())) {
-                alert("Topic already exists!");
+            // Simple validation tracking prevents duplicates safely
+            if (trackerData[subject].some(t => t.name.toLowerCase() === name.toLowerCase())) {
+                alert("This topic already exists!");
                 return;
             }
 
-            // Generate an ID to track elements safely during sort/drag switches
-            const uniqueId = 'id-' + Math.random().toString(36).substr(2, 9);
-
-            trackerData[subject].push({ id: uniqueId, name: topicName, questions: 0 });
+            trackerData[subject].push({ name: name, questions: 0 });
             inputField.value = "";
             saveData();
             render();
         }
 
-        function removeTopic(subject, id) {
-            trackerData[subject] = trackerData[subject].filter(t => t.id !== id);
+        function removeTopic(subject, index) {
+            trackerData[subject].splice(index, 1);
             saveData();
             render();
         }
 
-        function updateCount(subject, id, change) {
-            const index = trackerData[subject].findIndex(t => t.id === id);
-            if(index !== -1) {
-                trackerData[subject][index].questions += change;
-                if (trackerData[subject][index].questions < 0) trackerData[subject][index].questions = 0;
-                saveData();
-                render();
+        function updateCount(subject, index, change) {
+            trackerData[subject][index].questions += change;
+            if (trackerData[subject][index].questions < 0) {
+                trackerData[subject][index].questions = 0;
             }
+            saveData();
+            render();
         }
 
-        // Inline Text Modification Trigger
-        function startEdit(subject, id) {
-            const span = document.getElementById(`text-${id}`);
-            const currentName = span.innerText;
-            
+        // Fixed Inline Edit Loop targeting explicitly using local index array paths
+        function startEdit(subject, index) {
+            const textElement = document.getElementById(`text-${subject}-${index}`);
+            const currentName = trackerData[subject][index].name;
+
             const input = document.createElement('input');
             input.type = 'text';
             input.className = 'edit-input';
             input.value = currentName;
-            
-            // Handle save changes execution
-            const finishEdit = () => {
-                const newName = input.value.trim();
-                if(newName !== "") {
-                    const index = trackerData[subject].findIndex(t => t.id === id);
-                    if(index !== -1) {
-                        trackerData[subject][index].name = newName;
-                        saveData();
-                    }
+
+            const commitEdit = () => {
+                const updatedTitle = input.value.trim();
+                if (updatedTitle !== "") {
+                    trackerData[subject][index].name = updatedTitle;
+                    saveData();
                 }
                 render();
             };
 
-            input.onblur = finishEdit;
-            input.onkeydown = (e) => { if(e.key === 'Enter') finishEdit(); };
-            
-            span.replaceWith(input);
+            input.onblur = commitEdit;
+            input.onkeydown = (e) => { if (e.key === 'Enter') commitEdit(); };
+
+            textElement.replaceWith(input);
             input.focus();
         }
 
-        // Main Drawing Engine
+        // Tap-to-Move Positioning Logic
+        function moveItem(subject, index, direction) {
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= trackerData[subject].length) return;
+
+            // Swap element nodes inside data structure state array cleanly
+            const temporary = trackerData[subject][index];
+            trackerData[subject][index] = trackerData[subject][targetIndex];
+            trackerData[subject][targetIndex] = temporary;
+
+            saveData();
+            render();
+        }
+
+        // Global Graphics Painting Engine
         function render() {
             const subjects = ['english', 'maths', 'reasoning', 'ga'];
+            document.getElementById('global-sort-toggle').checked = autoSortActive;
 
             subjects.forEach(subject => {
                 const listElement = document.getElementById(`${subject}-list`);
                 const baselineElement = document.getElementById(`${subject}-baseline`);
-                
-                // Sync baseline controls UI state
-                document.getElementById(`${subject}-sort-toggle`).checked = sortConfigs[subject];
                 listElement.innerHTML = "";
 
-                let originalTopics = trackerData[subject];
-                
-                // Calculate Baseline
+                let topicsList = trackerData[subject];
+
+                // Baseline math equation execution tracking
                 let average = 0;
-                if (originalTopics.length > 0) {
-                    const totalQuestions = originalTopics.reduce((sum, item) => sum + item.questions, 0);
-                    average = totalQuestions / originalTopics.length;
+                if (topicsList.length > 0) {
+                    const total = topicsList.reduce((sum, item) => sum + item.questions, 0);
+                    average = total / topicsList.length;
                 }
                 baselineElement.innerText = `Avg: ${average.toFixed(1)}`;
 
-                // Compute Color Status Class for helper comparison
-                const getStatusClass = (questions) => {
-                    if (questions === 0) return "status-untouched";
-                    if (questions < average) return "status-below-avg";
-                    return "status-good";
-                };
+                // Deep clone and store pointer references safely to isolate indexing bugs
+                let outputItems = topicsList.map((item, idx) => ({ ...item, pointerIndex: idx }));
 
-                // Prepare arrays for display. Deep clone items so sorting doesn't destroy original positions if manual arrangement is active.
-                let itemsToRender = originalTopics.map((item, index) => ({...item, originalIndex: index}));
-
-                if (sortConfigs[subject]) {
-                    // Sort Priorities: Red (0), then Yellow (1), then Green (2)
-                    const statusWeight = (item) => {
-                        if (item.questions === 0) return 0;
-                        if (item.questions < average) return 1;
-                        return 2;
-                    };
-                    itemsToRender.sort((a, b) => statusWeight(a) - statusWeight(b));
-                }
-
-                itemsToRender.forEach((topic) => {
-                    const li = document.createElement('li');
-                    const colorClass = getStatusClass(topic.questions);
-                    
-                    // Allow dragging only if auto-sort is turned OFF
-                    const isSortOff = !sortConfigs[subject];
-                    li.className = `topic-item ${colorClass} ${isSortOff ? 'draggable' : ''}`;
-                    if(isSortOff) li.setAttribute('draggable', 'true');
-                    li.setAttribute('data-id', topic.id);
-
-                    li.innerHTML = `
-                        <div class="topic-info">
-                            ${isSortOff ? '<span class="drag-handle">☰</span>' : ''}
-                            <span class="topic-name" id="text-${topic.id}">${topic.name}</span>
-                            <button class="btn-edit-trigger" onclick="startEdit('${subject}', '${topic.id}')" title="Rename">✎</button>
-                        </div>
-                        <div class="question-controls">
-                            <button class="btn-q" onclick="updateCount('${subject}', '${topic.id}', -5)">-5</button>
-                            <button class="btn-q" onclick="updateCount('${subject}', '${topic.id}', -1)">-</button>
-                            <span class="q-count">${topic.questions}</span>
-                            <button class="btn-q" onclick="updateCount('${subject}', '${topic.id}', 1)">+</button>
-                            <button class="btn-q" onclick="updateCount('${subject}', '${topic.id}', 5)">+5</button>
-                            <button class="btn-delete" onclick="removeTopic('${subject}', '${topic.id}')" title="Delete">🗑</button>
-                        </div>
-                    `;
-                    
-                    // Bind Drag and Drop Event Listeners
-                    if(isSortOff) {
-                        li.addEventListener('dragstart', () => li.classList.add('dragging'));
-                        li.addEventListener('dragend', () => {
-                            li.classList.remove('dragging');
-                            saveManualOrder(subject, listElement);
-                        });
-                    }
-
-                    listElement.appendChild(li);
-                });
-
-                // Attach tracking drop window calculation loop
-                if(!sortConfigs[subject]) {
-                    listElement.addEventListener('dragover', e => {
-                        e.preventDefault();
-                        const draggingItem = listElement.querySelector('.dragging');
-                        if(!draggingItem) return;
-                        const siblings = [...listElement.querySelectorAll('.topic-item:not(.dragging)')];
-                        
-                        let nextSibling = siblings.find(sibling => {
-                            return e.clientY <= sibling.getBoundingClientRect().top + sibling.getBoundingClientRect().height / 2;
-                        });
-                        
-                        listElement.insertBefore(draggingItem, nextSibling);
+                if (autoSortActive) {
+                    outputItems.sort((a, b) => {
+                        const getWeight = (x) => (x.questions === 0 ? 0 : x.questions < average ? 1 : 2);
+                        return getWeight(a) - getWeight(b);
                     });
                 }
+
+                outputItems.forEach((topic) => {
+                    const li = document.createElement('li');
+                    
+                    // Style assignments
+                    if (topic.questions === 0) li.className = "topic-item status-untouched";
+                    else if (topic.questions < average) li.className = "topic-item status-below-avg";
+                    else li.className = "topic-item status-good";
+
+                    // Dynamic Mobile Layout Setup
+                    li.innerHTML = `
+                        <div class="topic-main-row">
+                            <div class="topic-meta">
+                                <span class="topic-name" id="text-${subject}-${topic.pointerIndex}">${topic.name}</span>
+                                <button class="action-icon-btn" onclick="startEdit('${subject}', ${topic.pointerIndex})" style="color: #2c3e50;">✎</button>
+                            </div>
+                            <button class="action-icon-btn" onclick="removeTopic('${subject}', ${topic.pointerIndex})" style="color: #b2bec3;">🗑</button>
+                        </div>
+                        <div class="mobile-controls-row">
+                            ${!autoSortActive ? `
+                            <div class="move-actions">
+                                <button class="btn-move" onclick="moveItem('${subject}', ${topic.pointerIndex}, -1)">▲</button>
+                                <button class="btn-move" onclick="moveItem('${subject}', ${topic.pointerIndex}, 1)">▼</button>
+                            </div>` : ''}
+                            <div class="q-counter-box">
+                                <button class="btn-q" onclick="updateCount('${subject}', ${topic.pointerIndex}, -5)">-5</button>
+                                <button class="btn-q" onclick="updateCount('${subject}', ${topic.pointerIndex}, -1)">-</button>
+                                <span class="q-count">${topic.questions}</span>
+                                <button class="btn-q" onclick="updateCount('${subject}', ${topic.pointerIndex}, 1)">+</button>
+                                <button class="btn-q" onclick="updateCount('${subject}', ${topic.pointerIndex}, 5)">+5</button>
+                            </div>
+                        </div>
+                    `;
+                    listElement.appendChild(li);
+                });
             });
         }
 
-        // Re-align the core data structure to match the screen's drag layout
-        function saveManualOrder(subject, containerElement) {
-            const currentUIOrderIds = [...containerElement.querySelectorAll('.topic-item')].map(li => li.getAttribute('data-id'));
-            
-            const reorderedData = currentUIOrderIds.map(id => {
-                return trackerData[subject].find(t => t.id === id);
-            }).filter(Boolean);
-
-            trackerData[subject] = reorderedData;
-            saveData();
-        }
-
+        // Initialize display configuration state maps
         render();
     </script>
 </body>
