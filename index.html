@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SSC Syllabus Tracker (Pro Mobile)</title>
+    <title>SSC Syllabus Tracker</title>
     <style>
         :root {
             --bg-color: #f1f2f6;
@@ -164,7 +164,6 @@
         .btn-q { background: #ffffff; border: 1px solid rgba(0,0,0,0.15); min-width: 36px; height: 36px; font-size: 0.85rem; font-weight: bold; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
         .q-count { min-width: 40px; text-align: center; font-weight: bold; font-size: 0.95rem; }
 
-        /* Updated Clipboard Text Backup Panel Layout */
         .backup-card { background: #e2e8f0; border-radius: 10px; padding: 12px; margin-top: 20px; border: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 8px; }
         .backup-card h3 { margin: 0; font-size: 0.9rem; color: #475569; }
         .backup-textarea { width: 100%; height: 70px; font-family: monospace; font-size: 0.75rem; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box; resize: none; background: #fff; color: #333; }
@@ -267,22 +266,22 @@
     </div>
 
     <script>
-        let trackerData = JSON.parse(localStorage.getItem('sscV6_Data')) || {
+        let trackerData = JSON.parse(localStorage.getItem('sscV7_Data')) || {
             english: [], maths: [], reasoning: [], ga: []
         };
 
-        let subGroupsMap = JSON.parse(localStorage.getItem('sscV6_Groups')) || {
+        let subGroupsMap = JSON.parse(localStorage.getItem('sscV7_Groups')) || {
             english: ["General"], maths: ["General"], reasoning: ["General"], ga: ["General"]
         };
 
         let activeGroupFilters = { english: "ALL", maths: "ALL", reasoning: "ALL", ga: "ALL" };
-        let autoSortActive = JSON.parse(localStorage.getItem('sscV6_Sort')) || false;
+        let autoSortActive = JSON.parse(localStorage.getItem('sscV7_Sort')) || false;
         let currentTab = 'english';
 
         function saveData() {
-            localStorage.setItem('sscV6_Data', JSON.stringify(trackerData));
-            localStorage.setItem('sscV6_Groups', JSON.stringify(subGroupsMap));
-            localStorage.setItem('sscV6_Sort', JSON.stringify(autoSortActive));
+            localStorage.setItem('sscV7_Data', JSON.stringify(trackerData));
+            localStorage.setItem('sscV7_Groups', JSON.stringify(subGroupsMap));
+            localStorage.setItem('sscV7_Sort', JSON.stringify(autoSortActive));
             updateBackupCodeBoxState();
         }
 
@@ -290,7 +289,6 @@
             currentTab = subject;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.subject-card').forEach(card => card.classList.remove('active'));
-
             document.getElementById(`btn-tab-${subject}`).classList.add('active');
             document.getElementById(`${subject}-card`).classList.add('active');
         }
@@ -305,12 +303,10 @@
             const inputField = document.getElementById(`${subject}-new-group-name`);
             const groupName = inputField.value.trim();
             if (!groupName) return;
-
             if (subGroupsMap[subject].map(g => g.toLowerCase()).includes(groupName.toLowerCase())) {
                 alert("Group already exists!");
                 return;
             }
-
             subGroupsMap[subject].push(groupName);
             inputField.value = "";
             saveData();
@@ -321,19 +317,15 @@
             event.stopPropagation();
             const newName = prompt(`Enter a new name for the group "${oldName}":`, oldName);
             if (!newName || newName.trim() === "" || newName.trim() === oldName) return;
-
             const cleanNewName = newName.trim();
             if (subGroupsMap[subject].map(g => g.toLowerCase()).includes(cleanNewName.toLowerCase())) {
                 alert("A group with that name already exists.");
                 return;
             }
-
             const groupIndex = subGroupsMap[subject].indexOf(oldName);
             if (groupIndex !== -1) subGroupsMap[subject][groupIndex] = cleanNewName;
-
             trackerData[subject].forEach(topic => { if (topic.group === oldName) topic.group = cleanNewName; });
             if (activeGroupFilters[subject] === oldName) activeGroupFilters[subject] = cleanNewName;
-
             saveData();
             render();
         }
@@ -342,11 +334,9 @@
             event.stopPropagation();
             if (groupName === "General") return alert("The 'General' group cannot be deleted.");
             if (!confirm(`Are you sure you want to delete "${groupName}"? Topics inside it will safely move to 'General'.`)) return;
-
             subGroupsMap[subject] = subGroupsMap[subject].filter(g => g !== groupName);
             trackerData[subject].forEach(topic => { if (topic.group === groupName) topic.group = "General"; });
             if (activeGroupFilters[subject] === groupName) activeGroupFilters[subject] = "ALL";
-
             saveData();
             render();
         }
@@ -362,12 +352,10 @@
             const name = inputField.value.trim();
             const chosenGroup = selectField.value;
             if (!name) return;
-
             if (trackerData[subject].some(t => t.name.toLowerCase() === name.toLowerCase())) {
                 alert("This topic already exists!");
                 return;
             }
-
             trackerData[subject].push({ name: name, questions: 0, group: chosenGroup });
             inputField.value = "";
             saveData();
@@ -392,7 +380,6 @@
             const currentName = trackerData[subject][index].name;
             const input = document.createElement('input');
             input.type = 'text'; input.className = 'edit-input'; input.value = currentName;
-
             const commitEdit = () => {
                 const updatedTitle = input.value.trim();
                 if (updatedTitle !== "") { trackerData[subject][index].name = updatedTitle; saveData(); }
@@ -414,8 +401,6 @@
             render();
         }
 
-        /* NEW CLIPBOARD BASED BACKUP ENGINE (Bypasses local device storage file system blocks completely)
-        */
         function updateBackupCodeBoxState() {
             const packageData = { trackerData: trackerData, subGroupsMap: subGroupsMap };
             document.getElementById('backup-code-box').value = btoa(encodeURIComponent(JSON.stringify(packageData)));
@@ -427,28 +412,49 @@
             box.select();
             box.setSelectionRange(0, 99999);
             navigator.clipboard.writeText(box.value).then(() => {
-                alert("Syllabus data snippet code copied to clipboard! Save it securely in your phone's Notes app.");
+                alert("Syllabus data snippet code copied to clipboard!");
             }).catch(() => {
-                alert("Auto-copy blocked by phone security. Tap and hold down inside the code box to manually copy the text.");
+                alert("Tap and hold inside the box to manually copy the text.");
             });
         }
 
+        /* SMART RECOVERY SYSTEM
+           Accepts BOTH the new Base64 text and your raw old text string directly!
+        */
         function pasteRestoreFromClipboard() {
-            const codeInput = prompt("Paste your saved backup text code string here:");
-            if (!codeInput || codeInput.trim() === "") return;
+            let input = prompt("Paste your backup string here:");
+            if (!input || input.trim() === "") return;
+            input = input.trim();
+
+            let parsedData;
             try {
-                const parsedData = JSON.parse(decodeURIComponent(atob(codeInput.trim())));
+                // Scenario A: Check if it's the raw text string from the old file layout
+                let clearText = input;
+                if (clearText.startsWith("const sscBackupData = ")) {
+                    clearText = clearText.replace("const sscBackupData = ", "");
+                    if (clearText.endsWith(";")) {
+                        clearText = clearText.slice(0, -1);
+                    }
+                }
+
+                if (clearText.startsWith("{")) {
+                    parsedData = JSON.parse(clearText);
+                } else {
+                    // Scenario B: Treat it as a modern Base64 encrypted snippet string
+                    parsedData = JSON.parse(decodeURIComponent(atob(input)));
+                }
+
                 if (parsedData.trackerData && parsedData.subGroupsMap) {
                     trackerData = parsedData.trackerData;
                     subGroupsMap = parsedData.subGroupsMap;
                     saveData();
                     render();
-                    alert("Syllabus successfully fully restored!");
+                    alert("Syllabus successfully fully restored from your text backup!");
                 } else {
-                    alert("Invalid code content configuration mapping layers.");
+                    alert("Data structure is missing key components.");
                 }
             } catch (err) {
-                alert("Failed to parse code. Ensure you copied the absolute complete text string out of your notes.");
+                alert("Failed to parse this data string. Make sure you copied the full snippet.");
             }
         }
 
