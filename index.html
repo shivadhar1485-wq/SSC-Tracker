@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SSC Syllabus Tracker (Mobile)</title>
+    <title>SSC Syllabus Tracker (Pro Mobile)</title>
     <style>
         :root {
             --bg-color: #f1f2f6;
@@ -15,11 +15,11 @@
             --flag-red: #ff7675;
             --flag-yellow: #ffeaa7;
             --flag-green: #55efc4;
+            --group-bg: #ffeaa7;
         }
 
-        /* Mobile-first structural resetting */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -27,280 +27,145 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 15px;
-        }
+        header { text-align: center; margin-bottom: 12px; }
+        h1 { font-size: 1.4rem; color: var(--primary-purple); margin: 4px 0; }
+        p { font-size: 0.8rem; margin: 0; color: #636e72; }
+        .container { width: 100%; max-width: 500px; margin: 0 auto; }
 
-        h1 {
-            font-size: 1.5rem;
-            color: var(--primary-purple);
-            margin: 5px 0;
-        }
-
-        p {
-            font-size: 0.85rem;
-            margin: 0;
-            color: #636e72;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        /* Mobile Swipe/Scroll friendly Tab View */
+        /* Multi-row wrapping layout for main tabs */
         .tabs-nav {
             display: flex;
+            flex-wrap: wrap;
             background: #dfe6e9;
             border-radius: 8px;
             padding: 4px;
-            margin-bottom: 15px;
-            gap: 2px;
+            margin-bottom: 12px;
+            gap: 4px;
         }
 
         .tab-btn {
-            flex: 1;
+            flex: 1 1 calc(50% - 4px); /* Fallback calculation forces two crisp rows on small screens if needed */
+            min-width: 80px;
             background: transparent;
             border: none;
-            padding: 10px 5px;
-            font-size: 0.9rem;
+            padding: 10px 4px;
+            font-size: 0.85rem;
             font-weight: bold;
             color: #555;
             cursor: pointer;
             border-radius: 6px;
-            transition: all 0.2s ease;
             text-align: center;
         }
 
         .tab-btn.active {
             background-color: var(--card-bg);
             color: var(--primary-purple);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* Core Subject Container Window */
-        .subject-card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-            padding: 15px;
-            display: none;
-        }
-
-        .subject-card.active {
+        /* Sub-Groups Wrapping Container Block */
+        .sub-group-bar {
             display: flex;
-            flex-direction: column;
-        }
-
-        .subject-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-wrap: wrap; /* Automatically wraps tabs to a secondary row when filled */
+            gap: 6px;
             margin-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-
-        .subject-title {
-            margin: 0;
-            font-size: 1.2rem;
-        }
-
-        .baseline-badge {
-            font-size: 0.85rem;
-            background: var(--bg-color);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-weight: bold;
-        }
-
-        /* Global Toggle Controls */
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--bg-color);
-            padding: 10px;
+            background: rgba(0, 0, 0, 0.03);
+            padding: 6px;
             border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: 0.85rem;
+        }
+
+        .group-btn {
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            font-size: 0.8rem;
             font-weight: 600;
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 20px;
-        }
-
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-
-        .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #b2bec3; transition: .2s; border-radius: 20px;
-        }
-
-        .slider:before {
-            position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px;
-            background-color: white; transition: .2s; border-radius: 50%;
-        }
-
-        input:checked + .slider { background-color: var(--primary-purple); }
-        input:checked + .slider:before { transform: translateX(20px); }
-
-        /* Input Block */
-        .input-group {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .input-group input {
-            flex: 1;
-            padding: 12px;
-            font-size: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            outline: none;
-        }
-
-        .input-group button {
-            background: var(--primary-purple);
-            color: white;
-            border: none;
-            padding: 0 16px;
-            font-size: 1.2rem;
-            border-radius: 8px;
+            border-radius: 20px;
+            color: #475569;
             cursor: pointer;
         }
 
-        /* Mobile Dynamic Topic List Layout */
-        .topic-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .group-btn.active {
+            background: var(--primary-purple);
+            color: white;
+            border-color: var(--primary-purple);
         }
 
-        .topic-item {
-            display: flex;
-            flex-direction: column;
-            padding: 12px;
+        .group-btn.all-btn { border-style: dashed; }
+
+        /* Interactive Setup Elements */
+        .group-creation-panel {
+            background: #edf2f7;
+            padding: 10px;
             border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background-color: var(--card-bg);
-            gap: 10px;
+            margin-bottom: 15px;
+            border: 1px dashed #cbd5e1;
         }
+        .group-creation-panel h4 { margin: 0 0 8px 0; font-size: 0.85rem; color: #4a5568; }
 
-        /* Color States */
+        .subject-card { background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); padding: 15px; display: none; }
+        .subject-card.active { display: flex; flex-direction: column; }
+        .subject-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .subject-title { margin: 0; font-size: 1.15rem; }
+        .baseline-badge { font-size: 0.8rem; background: var(--bg-color); padding: 4px 8px; border-radius: 6px; font-weight: bold; }
+
+        .toggle-container { display: flex; align-items: center; justify-content: space-between; background: var(--bg-color); padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 0.8rem; font-weight: 600; }
+        .toggle-switch { position: relative; display: inline-block; width: 36px; height: 18px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #b2bec3; transition: .2s; border-radius: 18px; }
+        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-purple); }
+        input:checked + .slider:before { transform: translateX(18px); }
+
+        .input-group { display: flex; gap: 6px; margin-bottom: 12px; }
+        .input-group input, .input-group select { padding: 10px; font-size: 0.9rem; border: 1px solid var(--border-color); border-radius: 8px; outline: none; }
+        .input-group input { flex: 1; }
+        .input-group select { background: white; max-width: 110px; font-size: 0.8rem; font-weight: 600; }
+        .input-group button { background: var(--primary-purple); color: white; border: none; padding: 0 14px; font-size: 1.1rem; border-radius: 8px; }
+
+        /* Main Topics Rendering Engine UI */
+        .topic-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+        .topic-item { display: flex; flex-direction: column; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--card-bg); gap: 8px; }
         .status-untouched { background-color: var(--flag-red); border-color: #e17055; }
         .status-below-avg { background-color: var(--flag-yellow); border-color: #eccc68; }
         .status-good { background-color: var(--flag-green); border-color: #2ed573; }
 
-        .topic-main-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
+        .topic-main-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .topic-meta { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+        .topic-inline-heading { display: flex; align-items: center; gap: 6px; }
+        .topic-name { font-weight: 600; font-size: 0.95rem; word-break: break-word; }
+        .group-tag-label { font-size: 0.7rem; background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .edit-input { font-size: 0.95rem; font-weight: 600; padding: 4px; border: 2px solid var(--primary-purple); border-radius: 6px; width: 85%; outline: none; }
+        .action-row-buttons { display: flex; gap: 4px; }
+        .action-icon-btn { background: transparent; border: none; font-size: 1rem; padding: 4px; cursor: pointer; }
 
-        .topic-meta {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-        }
+        .mobile-controls-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.35); padding: 5px; border-radius: 6px; gap: 4px; }
+        .move-actions { display: flex; gap: 2px; }
+        .btn-move { background: rgba(0, 0, 0, 0.05); border: none; padding: 6px 8px; font-size: 0.8rem; border-radius: 4px; font-weight: bold; }
+        .q-counter-box { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+        .btn-q { background: #ffffff; border: 1px solid rgba(0,0,0,0.15); min-width: 36px; height: 36px; font-size: 0.85rem; font-weight: bold; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+        .q-count { min-width: 40px; text-align: center; font-weight: bold; font-size: 0.95rem; }
 
-        .topic-name {
-            font-weight: 600;
-            font-size: 1rem;
-            word-break: break-word;
-        }
-
-        .edit-input {
-            font-size: 1rem;
-            font-weight: 600;
-            padding: 5px;
-            border: 2px solid var(--primary-purple);
-            border-radius: 6px;
-            width: 80%;
-            outline: none;
-        }
-
-        .action-icon-btn {
-            background: transparent;
-            border: none;
-            font-size: 1.1rem;
-            padding: 4px 8px;
-            cursor: pointer;
-        }
-
-        /* Large, Easy-Touch Buttons for Mobile Practice Increments */
-        .mobile-controls-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.4);
-            padding: 6px;
-            border-radius: 6px;
-            gap: 4px;
-        }
-
-        .move-actions {
-            display: flex;
-            gap: 2px;
-        }
-
-        .btn-move {
-            background: rgba(0, 0, 0, 0.05);
-            border: none;
-            padding: 6px 10px;
-            font-size: 0.85rem;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-
-        .q-counter-box {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-left: auto;
-        }
-
-        .btn-q {
-            background: #ffffff;
-            border: 1px solid rgba(0,0,0,0.15);
-            min-width: 38px;
-            height: 38px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .q-count {
-            min-width: 45px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1rem;
-        }
+        /* Hardware Backup System Styles */
+        .backup-card { background: #e2e8f0; border-radius: 10px; padding: 12px; margin-top: 20px; border: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 8px; }
+        .backup-card h3 { margin: 0; font-size: 0.9rem; color: #475569; }
+        .file-input-wrapper { display: flex; flex-direction: column; gap: 6px; }
+        .file-input-wrapper input[type="file"] { font-size: 0.75rem; color: #475569; width: 100%; }
+        .backup-btn-group { display: flex; gap: 8px; }
+        .btn-backup { flex: 1; background: #475569; color: white; border: none; padding: 10px 6px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; text-align: center; }
+        .btn-backup.restore { background: #2d3748; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>SSC Syllabus Tracker</h1>
-        <p>Optimized for Mobile Touchscreens</p>
+        <p>Auto-wrapping Rows & External File JS Backups</p>
     </header>
 
     <div class="container">
+        <!-- Main Subjects Wrapping Tab Bar -->
         <div class="tabs-nav">
             <button class="tab-btn active" id="btn-tab-english" onclick="switchTab('english')">English</button>
             <button class="tab-btn" id="btn-tab-maths" onclick="switchTab('maths')">Maths</button>
@@ -316,67 +181,100 @@
             </label>
         </div>
 
+        <!-- Master Content View Blueprint Wrapper -->
+        <!-- The JavaScript rendering loop automatically manages internal elements inside these card boxes -->
         <div class="subject-card active" id="english-card">
-            <div class="subject-header">
-                <h2 class="subject-title">English</h2>
-                <span class="baseline-badge" id="english-baseline">Avg: 0</span>
+            <div class="subject-header"><h2 class="subject-title">English</h2><span class="baseline-badge" id="english-baseline">Avg: 0</span></div>
+            <div class="sub-group-bar" id="english-groups-bar"></div>
+            <div class="group-creation-panel">
+                <h4>Create Group (e.g., Grammar, Vocab)</h4>
+                <div class="input-group"><input type="text" id="english-new-group-name" placeholder="Group name..."><button onclick="createNewGroup('english')">Add Group</button></div>
             </div>
             <div class="input-group">
-                <input type="text" id="english-input" placeholder="Enter topic title...">
+                <input type="text" id="english-input" placeholder="Topic title...">
+                <select id="english-group-select"><option value="General">General</option></select>
                 <button onclick="addTopic('english')">+</button>
             </div>
             <ul class="topic-list" id="english-list"></ul>
         </div>
 
         <div class="subject-card" id="maths-card">
-            <div class="subject-header">
-                <h2 class="subject-title">Maths</h2>
-                <span class="baseline-badge" id="maths-baseline">Avg: 0</span>
+            <div class="subject-header"><h2 class="subject-title">Maths</h2><span class="baseline-badge" id="maths-baseline">Avg: 0</span></div>
+            <div class="sub-group-bar" id="maths-groups-bar"></div>
+            <div class="group-creation-panel">
+                <h4>Create Group (e.g., Arithmetic, Advance)</h4>
+                <div class="input-group"><input type="text" id="maths-new-group-name" placeholder="Group name..."><button onclick="createNewGroup('maths')">Add Group</button></div>
             </div>
             <div class="input-group">
-                <input type="text" id="maths-input" placeholder="Enter topic title...">
+                <input type="text" id="maths-input" placeholder="Topic title...">
+                <select id="maths-group-select"><option value="General">General</option></select>
                 <button onclick="addTopic('maths')">+</button>
             </div>
             <ul class="topic-list" id="maths-list"></ul>
         </div>
 
         <div class="subject-card" id="reasoning-card">
-            <div class="subject-header">
-                <h2 class="subject-title">Reasoning</h2>
-                <span class="baseline-badge" id="reasoning-baseline">Avg: 0</span>
+            <div class="subject-header"><h2 class="subject-title">Reasoning</h2><span class="baseline-badge" id="reasoning-baseline">Avg: 0</span></div>
+            <div class="sub-group-bar" id="reasoning-groups-bar"></div>
+            <div class="group-creation-panel">
+                <h4>Create Group (e.g., Verbal, Non-Verbal)</h4>
+                <div class="input-group"><input type="text" id="reasoning-new-group-name" placeholder="Group name..."><button onclick="createNewGroup('reasoning')">Add Group</button></div>
             </div>
             <div class="input-group">
-                <input type="text" id="reasoning-input" placeholder="Enter topic title...">
+                <input type="text" id="reasoning-input" placeholder="Topic title...">
+                <select id="reasoning-group-select"><option value="General">General</option></select>
                 <button onclick="addTopic('reasoning')">+</button>
             </div>
             <ul class="topic-list" id="reasoning-list"></ul>
         </div>
 
         <div class="subject-card" id="ga-card">
-            <div class="subject-header">
-                <h2 class="subject-title">General Awareness</h2>
-                <span class="baseline-badge" id="ga-baseline">Avg: 0</span>
+            <div class="subject-header"><h2 class="subject-title">General Awareness</h2><span class="baseline-badge" id="ga-baseline">Avg: 0</span></div>
+            <div class="sub-group-bar" id="ga-groups-bar"></div>
+            <div class="group-creation-panel">
+                <h4>Create Group (e.g., History, Geo, Polity)</h4>
+                <div class="input-group"><input type="text" id="ga-new-group-name" placeholder="Group name..."><button onclick="createNewGroup('ga')">Add Group</button></div>
             </div>
             <div class="input-group">
-                <input type="text" id="ga-input" placeholder="Enter topic title...">
+                <input type="text" id="ga-input" placeholder="Topic title...">
+                <select id="ga-group-select"><option value="General">General</option></select>
                 <button onclick="addTopic('ga')">+</button>
             </div>
             <ul class="topic-list" id="ga-list"></ul>
         </div>
+
+        <!-- Secure JS File Backup Module Window -->
+        <div class="backup-card">
+            <h3>Fail-Safe External File Storage Guard</h3>
+            <div class="file-input-wrapper">
+                <input type="file" id="upload-backup-file" accept=".js">
+                <div class="backup-btn-group">
+                    <button class="btn-backup" onclick="exportToJSFile()">Export Data (.js)</button>
+                    <button class="btn-backup restore" onclick="importFromJSFile()">Import Data (.js)</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Secure, Stable Core Data Model
-        let trackerData = JSON.parse(localStorage.getItem('sscTrackerMobileData')) || {
+        // Core Structured State Schema Configuration
+        let trackerData = JSON.parse(localStorage.getItem('sscV4_Data')) || {
             english: [], maths: [], reasoning: [], ga: []
         };
 
-        let autoSortActive = JSON.parse(localStorage.getItem('sscTrackerMobileSort')) || false;
+        let subGroupsMap = JSON.parse(localStorage.getItem('sscV4_Groups')) || {
+            english: ["General"], maths: ["General"], reasoning: ["General"], ga: ["General"]
+        };
+
+        // Active filter index tracking maps
+        let activeGroupFilters = { english: "ALL", maths: "ALL", reasoning: "ALL", ga: "ALL" };
+        let autoSortActive = JSON.parse(localStorage.getItem('sscV4_Sort')) || false;
         let currentTab = 'english';
 
         function saveData() {
-            localStorage.setItem('sscTrackerMobileData', JSON.stringify(trackerData));
-            localStorage.setItem('sscTrackerMobileSort', JSON.stringify(autoSortActive));
+            localStorage.setItem('sscV4_Data', JSON.stringify(trackerData));
+            localStorage.setItem('sscV4_Groups', JSON.stringify(subGroupsMap));
+            localStorage.setItem('sscV4_Sort', JSON.stringify(autoSortActive));
         }
 
         function switchTab(subject) {
@@ -394,18 +292,41 @@
             render();
         }
 
+        /* Group Allocation Engines */
+        function createNewGroup(subject) {
+            const inputField = document.getElementById(`${subject}-new-group-name`);
+            const groupName = inputField.value.trim();
+            if (!groupName) return;
+
+            if (subGroupsMap[subject].map(g => g.toLowerCase()).includes(groupName.toLowerCase())) {
+                alert("Group already exists!");
+                return;
+            }
+
+            subGroupsMap[subject].push(groupName);
+            inputField.value = "";
+            saveData();
+            render();
+        }
+
+        function filterByGroup(subject, targetGroup) {
+            activeGroupFilters[subject] = targetGroup;
+            render();
+        }
+
         function addTopic(subject) {
             const inputField = document.getElementById(`${subject}-input`);
+            const selectField = document.getElementById(`${subject}-group-select`);
             const name = inputField.value.trim();
+            const chosenGroup = selectField.value;
             if (!name) return;
 
-            // Simple validation tracking prevents duplicates safely
             if (trackerData[subject].some(t => t.name.toLowerCase() === name.toLowerCase())) {
                 alert("This topic already exists!");
                 return;
             }
 
-            trackerData[subject].push({ name: name, questions: 0 });
+            trackerData[subject].push({ name: name, questions: 0, group: chosenGroup });
             inputField.value = "";
             saveData();
             render();
@@ -419,14 +340,11 @@
 
         function updateCount(subject, index, change) {
             trackerData[subject][index].questions += change;
-            if (trackerData[subject][index].questions < 0) {
-                trackerData[subject][index].questions = 0;
-            }
+            if (trackerData[subject][index].questions < 0) trackerData[subject][index].questions = 0;
             saveData();
             render();
         }
 
-        // Fixed Inline Edit Loop targeting explicitly using local index array paths
         function startEdit(subject, index) {
             const textElement = document.getElementById(`text-${subject}-${index}`);
             const currentName = trackerData[subject][index].name;
@@ -452,21 +370,76 @@
             input.focus();
         }
 
-        // Tap-to-Move Positioning Logic
         function moveItem(subject, index, direction) {
             const targetIndex = index + direction;
             if (targetIndex < 0 || targetIndex >= trackerData[subject].length) return;
 
-            // Swap element nodes inside data structure state array cleanly
-            const temporary = trackerData[subject][index];
+            const temp = trackerData[subject][index];
             trackerData[subject][index] = trackerData[subject][targetIndex];
-            trackerData[subject][targetIndex] = temporary;
+            trackerData[subject][targetIndex] = temp;
 
             saveData();
             render();
         }
 
-        // Global Graphics Painting Engine
+        /* 
+           Hardware JS File Backup System Engines
+           Generates real, executable text attachment downloads containing deep-cloned state structures
+        */
+        function exportToJSFile() {
+            const packageData = {
+                trackerData: trackerData,
+                subGroupsMap: subGroupsMap
+            };
+            
+            // Build pseudo download anchor node reference pointing to virtual code string
+            const dataString = "const sscBackupData = " + JSON.stringify(packageData) + ";";
+            const blob = new Blob([dataString], { type: "application/javascript" });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "ssc_syllabus_backup.js";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function importFromJSFile() {
+            const fileInput = document.getElementById("upload-backup-file");
+            if (fileInput.files.length === 0) {
+                alert("Please tap 'Choose File' and select your saved 'ssc_syllabus_backup.js' file first.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const rawContent = e.target.result;
+                    // Extract structured data string cleanly out of JS file wrapper formatting boundaries
+                    const jsonString = rawContent.replace("const sscBackupData = ", "").replace(/;$/, "").trim();
+                    const parsedPackage = JSON.parse(jsonString);
+
+                    if (parsedPackage.trackerData && parsedPackage.subGroupsMap) {
+                        trackerData = parsedPackage.trackerData;
+                        subGroupsMap = parsedPackage.subGroupsMap;
+                        saveData();
+                        render();
+                        alert("Syllabus database successfully fully restored from file!");
+                    } else {
+                        alert("Error: Missing internal database structural arrays.");
+                    }
+                } catch (err) {
+                    alert("Failed to parse file. Make sure it is a valid backup generated from this tracker app.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        /* Rendering Canvas Controls Engine */
         function render() {
             const subjects = ['english', 'maths', 'reasoning', 'ga'];
             document.getElementById('global-sort-toggle').checked = autoSortActive;
@@ -474,11 +447,41 @@
             subjects.forEach(subject => {
                 const listElement = document.getElementById(`${subject}-list`);
                 const baselineElement = document.getElementById(`${subject}-baseline`);
+                const groupsBar = document.getElementById(`${subject}-groups-bar`);
+                const selectDropdown = document.getElementById(`${subject}-group-select`);
+                
                 listElement.innerHTML = "";
+                groupsBar.innerHTML = "";
+                selectDropdown.innerHTML = "";
+
+                // Populate context input selection mapping references
+                subGroupsMap[subject].forEach(group => {
+                    const opt = document.createElement('option');
+                    opt.value = group;
+                    opt.innerText = group;
+                    selectDropdown.appendChild(opt);
+                });
+
+                // Draw wrapping sub-group row buttons layout frame nodes
+                const activeFilter = activeGroupFilters[subject];
+                
+                const allBtn = document.createElement('button');
+                allBtn.className = `group-btn all-btn ${activeFilter === 'ALL' ? 'active' : ''}`;
+                allBtn.innerText = "Show All Topics";
+                allBtn.onclick = () => filterByGroup(subject, 'ALL');
+                groupsBar.appendChild(allBtn);
+
+                subGroupsMap[subject].forEach(group => {
+                    const gBtn = document.createElement('button');
+                    gBtn.className = `group-btn ${activeFilter === group ? 'active' : ''}`;
+                    gBtn.innerText = group;
+                    gBtn.onclick = () => filterByGroup(subject, group);
+                    groupsBar.appendChild(gBtn);
+                });
 
                 let topicsList = trackerData[subject];
 
-                // Baseline math equation execution tracking
+                // Execute baseline mathematical formulation calculation sequence
                 let average = 0;
                 if (topicsList.length > 0) {
                     const total = topicsList.reduce((sum, item) => sum + item.questions, 0);
@@ -486,8 +489,13 @@
                 }
                 baselineElement.innerText = `Avg: ${average.toFixed(1)}`;
 
-                // Deep clone and store pointer references safely to isolate indexing bugs
+                // Deep clone array element state scopes to isolate execution path index anomalies
                 let outputItems = topicsList.map((item, idx) => ({ ...item, pointerIndex: idx }));
+
+                // Filter items down to match open sub-tab context focus before sorting layouts
+                if (activeFilter !== "ALL") {
+                    outputItems = outputItems.filter(item => item.group === activeFilter);
+                }
 
                 if (autoSortActive) {
                     outputItems.sort((a, b) => {
@@ -499,22 +507,26 @@
                 outputItems.forEach((topic) => {
                     const li = document.createElement('li');
                     
-                    // Style assignments
                     if (topic.questions === 0) li.className = "topic-item status-untouched";
                     else if (topic.questions < average) li.className = "topic-item status-below-avg";
                     else li.className = "topic-item status-good";
 
-                    // Dynamic Mobile Layout Setup
+                    // Render touch item block nodes with embedded subgroup data tags
                     li.innerHTML = `
                         <div class="topic-main-row">
                             <div class="topic-meta">
-                                <span class="topic-name" id="text-${subject}-${topic.pointerIndex}">${topic.name}</span>
-                                <button class="action-icon-btn" onclick="startEdit('${subject}', ${topic.pointerIndex})" style="color: #2c3e50;">✎</button>
+                                <div class="topic-inline-heading">
+                                    <span class="topic-name" id="text-${subject}-${topic.pointerIndex}">${topic.name}</span>
+                                    <span class="group-tag-label">${topic.group || 'General'}</span>
+                                </div>
                             </div>
-                            <button class="action-icon-btn" onclick="removeTopic('${subject}', ${topic.pointerIndex})" style="color: #b2bec3;">🗑</button>
+                            <div class="action-row-buttons">
+                                <button class="action-icon-btn" onclick="startEdit('${subject}', ${topic.pointerIndex})">✎</button>
+                                <button class="action-icon-btn" onclick="removeTopic('${subject}', ${topic.pointerIndex})" style="color: #b2bec3;">🗑</button>
+                            </div>
                         </div>
                         <div class="mobile-controls-row">
-                            ${!autoSortActive ? `
+                            ${!autoSortActive && activeFilter === 'ALL' ? `
                             <div class="move-actions">
                                 <button class="btn-move" onclick="moveItem('${subject}', ${topic.pointerIndex}, -1)">▲</button>
                                 <button class="btn-move" onclick="moveItem('${subject}', ${topic.pointerIndex}, 1)">▼</button>
@@ -533,7 +545,6 @@
             });
         }
 
-        // Initialize display configuration state maps
         render();
     </script>
 </body>
