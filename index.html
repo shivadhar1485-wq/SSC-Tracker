@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SSC Syllabus Tracker</title>
+    <title>SSC Syllabus Tracker - Elite Edition</title>
     <style>
         :root {
             --bg-color: #f1f2f6;
@@ -15,6 +15,8 @@
             --flag-red: #ff7675;
             --flag-yellow: #ffeaa7;
             --flag-green: #55efc4;
+            --text-dark: #2d3436;
+            --text-muted: #636e72;
         }
 
         body {
@@ -28,31 +30,31 @@
 
         header { text-align: center; margin-bottom: 12px; }
         h1 { font-size: 1.4rem; color: var(--primary-purple); margin: 4px 0; }
-        p { font-size: 0.8rem; margin: 0; color: #636e72; }
+        p { font-size: 0.8rem; margin: 0; color: var(--text-muted); }
         .container { width: 100%; max-width: 500px; margin: 0 auto; }
 
+        /* Main Nav Grid Bars Setup */
         .tabs-nav {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
             background: #dfe6e9;
             border-radius: 8px;
             padding: 4px;
             margin-bottom: 12px;
-            gap: 4px;
+            gap: 2px;
         }
 
         .tab-btn {
-            flex: 1 1 calc(50% - 4px);
-            min-width: 80px;
             background: transparent;
             border: none;
-            padding: 10px 4px;
-            font-size: 0.85rem;
+            padding: 10px 2px;
+            font-size: 0.75rem;
             font-weight: bold;
             color: #555;
             cursor: pointer;
             border-radius: 6px;
             text-align: center;
+            white-space: nowrap;
         }
 
         .tab-btn.active {
@@ -61,51 +63,31 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .sub-group-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 15px;
-            background: rgba(0, 0, 0, 0.03);
-            padding: 6px;
-            border-radius: 8px;
-        }
+        /* Dashboard UI Elements */
+        .dashboard-grid { display: flex; flex-direction: column; gap: 12px; }
+        .stat-row-card { background: var(--card-bg); padding: 14px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); border-left: 4px solid var(--primary-purple); }
+        .stat-row-card h3 { margin: 0 0 6px 0; font-size: 0.95rem; color: var(--text-dark); }
+        
+        .summary-box { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+        .sub-stat { background: #edf2f7; padding: 10px; border-radius: 8px; text-align: center; }
+        .sub-stat .num { font-size: 1.2rem; font-weight: bold; color: var(--primary-purple); display: block; }
+        .sub-stat .lbl { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; }
 
-        .group-pill-wrapper {
-            display: inline-flex;
-            align-items: center;
-            background: #e2e8f0;
-            border: 1px solid #cbd5e1;
-            border-radius: 20px;
-            padding: 6px 14px;
-            cursor: pointer;
-        }
+        .subject-summary-item { background: var(--card-bg); padding: 12px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 6px; }
+        .subject-summary-item .meta-line { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: bold; }
+        
+        /* Metric Progress Bars Styles */
+        .progress-wrapper { width: 100%; background-color: #edf2f7; border-radius: 20px; height: 8px; overflow: hidden; position: relative; }
+        .progress-bar { background: linear-gradient(90deg, var(--primary-light), var(--primary-purple)); height: 100%; border-radius: 20px; width: 0%; transition: width 0.4s ease; }
 
-        .group-pill-wrapper.active {
-            background: var(--primary-purple);
-            color: white;
-            border-color: var(--primary-purple);
-        }
-
-        .group-btn {
-            background: transparent;
-            border: none;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #475569;
-            cursor: pointer;
-            padding: 0;
-        }
-
+        /* Sub Group Filter Navigation Layout Pill Modules */
+        .sub-group-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; background: rgba(0, 0, 0, 0.03); padding: 6px; border-radius: 8px; }
+        .group-pill-wrapper { display: inline-flex; align-items: center; background: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 20px; padding: 6px 14px; cursor: pointer; }
+        .group-pill-wrapper.active { background: var(--primary-purple); color: white; border-color: var(--primary-purple); }
+        .group-btn { background: transparent; border: none; font-size: 0.8rem; font-weight: 600; color: #475569; cursor: pointer; padding: 0; }
         .group-pill-wrapper.active .group-btn { color: white; }
 
-        .panel-box {
-            background: #edf2f7;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 1px dashed #cbd5e1;
-        }
+        .panel-box { background: #edf2f7; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #cbd5e1; }
         .panel-box h4 { margin: 0 0 8px 0; font-size: 0.85rem; color: #4a5568; }
 
         .mgmt-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; padding: 0; list-style: none;}
@@ -113,11 +95,17 @@
         .mgmt-actions { display: flex; gap: 4px; }
         .btn-mgmt-action { background: none; border: none; font-size: 0.9rem; cursor: pointer; padding: 2px 6px; }
 
+        /* Dynamic Subject Windows Structures Framework layout mapping components */
         .subject-card { background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); padding: 15px; display: none; }
         .subject-card.active { display: flex; flex-direction: column; }
-        .subject-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .subject-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
         .subject-title { margin: 0; font-size: 1.15rem; }
-        .baseline-badge { font-size: 0.8rem; background: var(--bg-color); padding: 4px 8px; border-radius: 6px; font-weight: bold; }
+        
+        .target-config-block { display: flex; align-items: center; justify-content: space-between; background: #edf2f7; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; font-size: 0.8rem; font-weight: bold; }
+        .target-config-block input { width: 60px; padding: 4px 6px; border-radius: 4px; border: 1px solid var(--border-color); font-weight: bold; text-align: center; }
+
+        .badge-container { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+        .baseline-badge { font-size: 0.75rem; background: var(--bg-color); padding: 4px 8px; border-radius: 6px; font-weight: bold; border: 1px solid var(--border-color); }
 
         .toggle-container { display: flex; align-items: center; justify-content: space-between; background: var(--bg-color); padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 0.8rem; font-weight: 600; }
         .toggle-switch { position: relative; display: inline-block; width: 36px; height: 18px; }
@@ -133,6 +121,7 @@
         .input-group select { background: white; max-width: 120px; font-size: 0.8rem; font-weight: 600; }
         .input-group button { background: var(--primary-purple); color: white; border: none; padding: 0 14px; font-size: 1.1rem; border-radius: 8px; }
 
+        /* Core Topics Drawing Canvas Elements Layout */
         .topic-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
         .topic-item { display: flex; flex-direction: column; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--card-bg); gap: 8px; }
         .status-untouched { background-color: var(--flag-red); border-color: #e17055; }
@@ -145,6 +134,10 @@
         .topic-name { font-weight: 600; font-size: 0.95rem; word-break: break-word; }
         .group-tag-label { font-size: 0.7rem; background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
         
+        /* Time Stale 14 Day Notification Badging */
+        .stale-badge { font-size: 0.7rem; background: #ffeaa7; color: #d63031; border: 1px solid #fdcb6e; padding: 2px 6px; border-radius: 4px; font-weight: bold; animation: pulse 2s infinite; display: inline-flex; align-items: center; gap: 2px;}
+        @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
+
         .edit-input { font-size: 0.95rem; font-weight: 600; padding: 4px; border: 2px solid var(--primary-purple); border-radius: 6px; width: 85%; outline: none; }
         .action-row-buttons { display: flex; gap: 4px; }
         .action-icon-btn { background: transparent; border: none; font-size: 1rem; padding: 4px; cursor: pointer; }
@@ -168,19 +161,98 @@
 
     <header>
         <h1>SSC Syllabus Tracker</h1>
-        <p>Polished Modular Alignment Workspace</p>
+        <p>Elite Multi-Dimensional Analytics Dashboard</p>
     </header>
 
     <div class="container">
-        <!-- Main Subject Selector Tabs -->
+        <!-- Main Top Level Navigation Array -->
         <div class="tabs-nav">
-            <button class="tab-btn active" id="btn-tab-english" onclick="switchTab('english')">English</button>
-            <button class="tab-btn" id="btn-tab-maths" onclick="switchTab('maths')">Maths</button>
-            <button class="tab-btn" id="btn-tab-reasoning" onclick="switchTab('reasoning')">Reasoning</button>
+            <button class="tab-btn active" id="btn-tab-dash" onclick="switchTab('dash')">Dash</button>
+            <button class="tab-btn" id="btn-tab-english" onclick="switchTab('english')">Eng</button>
+            <button class="tab-btn" id="btn-tab-maths" onclick="switchTab('maths')">Math</button>
+            <button class="tab-btn" id="btn-tab-reasoning" onclick="switchTab('reasoning')">Reas</button>
             <button class="tab-btn" id="btn-tab-ga" onclick="switchTab('ga')">GA</button>
         </div>
 
-        <div class="toggle-container">
+        <!-- Dashboard Core Content Panel Module Window Frame -->
+        <div class="subject-card active" id="dash-card">
+            <div class="dashboard-grid">
+                <div class="stat-row-card">
+                    <h3>Overall Syllabus Progress Data</h3>
+                    <div class="summary-box">
+                        <div class="sub-stat"><span class="num" id="dash-total-q">0</span><span class="lbl">Total Practiced</span></div>
+                        <div class="sub-stat"><span class="num" id="dash-total-stale">0</span><span class="lbl">Stale Topics ⏱</span></div>
+                    </div>
+                </div>
+                
+                <div class="stat-row-card" style="display:flex; flex-direction:column; gap:10px;">
+                    <h3>Subject Completion Metrics</h3>
+                    
+                    <div class="subject-summary-item">
+                        <div class="meta-line"><span>English Layout Depth</span><span id="dash-eng-metrics">0% (0/0)</span></div>
+                        <div class="progress-wrapper"><div class="progress-bar" id="bar-eng"></div></div>
+                    </div>
+                    
+                    <div class="subject-summary-item">
+                        <div class="meta-line"><span>Quantitative Aptitude</span><span id="dash-maths-metrics">0% (0/0)</span></div>
+                        <div class="progress-wrapper"><div class="progress-bar" id="bar-maths"></div></div>
+                    </div>
+                    
+                    <div class="subject-summary-item">
+                        <div class="meta-line"><span>Intelligence & Reasoning</span><span id="dash-reas-metrics">0% (0/0)</span></div>
+                        <div class="progress-wrapper"><div class="progress-bar" id="bar-reas"></div></div>
+                    </div>
+                    
+                    <div class="subject-summary-item">
+                        <div class="meta-line"><span>General Awareness</span><span id="dash-ga-metrics">0% (0/0)</span></div>
+                        <div class="progress-wrapper"><div class="progress-bar" id="bar-ga"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- English Section Panel Frame -->
+        <div class="subject-card" id="english-card">
+            <div class="subject-header"><h2 class="subject-title">English Workspace</h2><div class="badge-container"><span class="baseline-badge" id="english-baseline">Avg: 0</span><span class="baseline-badge" style="background:#edf2f7;" id="english-total-badge">Total Q: 0</span></div></div>
+            <div class="target-config-block"><span>Target Milestone Practice Volume:</span><input type="number" id="english-target-val" value="100" onchange="updateTargetThreshold('english')"></div>
+            <div class="sub-group-bar" id="english-groups-bar"></div>
+            <div class="input-group"><input type="text" id="english-input" placeholder="Topic title..."><select id="english-group-select"><option value="">No Group</option></select><button onclick="addTopic('english')">+</button></div>
+            <ul class="topic-list" id="english-list"></ul>
+            <div class="panel-box" style="margin-top:20px;"><h4>Group Configuration Layer</h4><div class="input-group"><input type="text" id="english-new-group-name" placeholder="New group title..."><button onclick="createNewGroup('english')">Add</button></div><ul class="mgmt-list" id="english-mgmt-list"></ul></div>
+        </div>
+
+        <!-- Maths Section Panel Frame -->
+        <div class="subject-card" id="maths-card">
+            <div class="subject-header"><h2 class="subject-title">Maths Workspace</h2><div class="badge-container"><span class="baseline-badge" id="maths-baseline">Avg: 0</span><span class="baseline-badge" style="background:#edf2f7;" id="maths-total-badge">Total Q: 0</span></div></div>
+            <div class="target-config-block"><span>Target Milestone Practice Volume:</span><input type="number" id="maths-target-val" value="100" onchange="updateTargetThreshold('maths')"></div>
+            <div class="sub-group-bar" id="maths-groups-bar"></div>
+            <div class="input-group"><input type="text" id="maths-input" placeholder="Topic title..."><select id="maths-group-select"><option value="">No Group</option></select><button onclick="addTopic('maths')">+</button></div>
+            <ul class="topic-list" id="maths-list"></ul>
+            <div class="panel-box" style="margin-top:20px;"><h4>Group Configuration Layer</h4><div class="input-group"><input type="text" id="maths-new-group-name" placeholder="New group title..."><button onclick="createNewGroup('maths')">Add</button></div><ul class="mgmt-list" id="maths-mgmt-list"></ul></div>
+        </div>
+
+        <!-- Reasoning Section Panel Frame -->
+        <div class="subject-card" id="reasoning-card">
+            <div class="subject-header"><h2 class="subject-title">Reasoning Workspace</h2><div class="badge-container"><span class="baseline-badge" id="reasoning-baseline">Avg: 0</span><span class="baseline-badge" style="background:#edf2f7;" id="reasoning-total-badge">Total Q: 0</span></div></div>
+            <div class="target-config-block"><span>Target Milestone Practice Volume:</span><input type="number" id="reasoning-target-val" value="100" onchange="updateTargetThreshold('reasoning')"></div>
+            <div class="sub-group-bar" id="reasoning-groups-bar"></div>
+            <div class="input-group"><input type="text" id="reasoning-input" placeholder="Topic title..."><select id="reasoning-group-select"><option value="">No Group</option></select><button onclick="addTopic('reasoning')">+</button></div>
+            <ul class="topic-list" id="reasoning-list"></ul>
+            <div class="panel-box" style="margin-top:20px;"><h4>Group Configuration Layer</h4><div class="input-group"><input type="text" id="reasoning-new-group-name" placeholder="New group title..."><button onclick="createNewGroup('reasoning')">Add</button></div><ul class="mgmt-list" id="reasoning-mgmt-list"></ul></div>
+        </div>
+
+        <!-- GA Section Panel Frame -->
+        <div class="subject-card" id="ga-card">
+            <div class="subject-header"><h2 class="subject-title">GA Workspace</h2><div class="badge-container"><span class="baseline-badge" id="ga-baseline">Avg: 0</span><span class="baseline-badge" style="background:#edf2f7;" id="ga-total-badge">Total Q: 0</span></div></div>
+            <div class="target-config-block"><span>Target Milestone Practice Volume:</span><input type="number" id="ga-target-val" value="100" onchange="updateTargetThreshold('ga')"></div>
+            <div class="sub-group-bar" id="ga-groups-bar"></div>
+            <div class="input-group"><input type="text" id="ga-input" placeholder="Topic title..."><select id="ga-group-select"><option value="">No Group</option></select><button onclick="addTopic('ga')">+</button></div>
+            <ul class="topic-list" id="ga-list"></ul>
+            <div class="panel-box" style="margin-top:20px;"><h4>Group Configuration Layer</h4><div class="input-group"><input type="text" id="ga-new-group-name" placeholder="New group title..."><button onclick="createNewGroup('ga')">Add</button></div><ul class="mgmt-list" id="ga-mgmt-list"></ul></div>
+        </div>
+
+        <!-- Global Option Sorting Selector Box -->
+        <div class="toggle-container" id="sorting-toggle-row" style="display:none; margin-top:12px;">
             <span>Auto-Sort Priority Colors First</span>
             <label class="toggle-switch">
                 <input type="checkbox" id="global-sort-toggle" onchange="toggleSort()">
@@ -188,83 +260,10 @@
             </label>
         </div>
 
-        <!-- Subject Panels Loop -->
-        <div class="subject-card active" id="english-card">
-            <div class="subject-header"><h2 class="subject-title">English</h2><span class="baseline-badge" id="english-baseline">Avg: 0</span></div>
-            <div class="sub-group-bar" id="english-groups-bar"></div>
-            
-            <div class="input-group">
-                <input type="text" id="english-input" placeholder="Topic title...">
-                <select id="english-group-select"><option value="">No Group</option></select>
-                <button onclick="addTopic('english')">+</button>
-            </div>
-            <ul class="topic-list" id="english-list"></ul>
-            
-            <div class="panel-box" style="margin-top:20px;">
-                <h4>Group Management Dashboard</h4>
-                <div class="input-group"><input type="text" id="english-new-group-name" placeholder="New group name..."><button onclick="createNewGroup('english')">Add</button></div>
-                <ul class="mgmt-list" id="english-mgmt-list"></ul>
-            </div>
-        </div>
-
-        <div class="subject-card" id="maths-card">
-            <div class="subject-header"><h2 class="subject-title">Maths</h2><span class="baseline-badge" id="maths-baseline">Avg: 0</span></div>
-            <div class="sub-group-bar" id="maths-groups-bar"></div>
-            
-            <div class="input-group">
-                <input type="text" id="maths-input" placeholder="Topic title...">
-                <select id="maths-group-select"><option value="">No Group</option></select>
-                <button onclick="addTopic('maths')">+</button>
-            </div>
-            <ul class="topic-list" id="maths-list"></ul>
-            
-            <div class="panel-box" style="margin-top:20px;">
-                <h4>Group Management Dashboard</h4>
-                <div class="input-group"><input type="text" id="maths-new-group-name" placeholder="New group name..."><button onclick="createNewGroup('maths')">Add</button></div>
-                <ul class="mgmt-list" id="maths-mgmt-list"></ul>
-            </div>
-        </div>
-
-        <div class="subject-card" id="reasoning-card">
-            <div class="subject-header"><h2 class="subject-title">Reasoning</h2><span class="baseline-badge" id="reasoning-baseline">Avg: 0</span></div>
-            <div class="sub-group-bar" id="reasoning-groups-bar"></div>
-            
-            <div class="input-group">
-                <input type="text" id="reasoning-input" placeholder="Topic title...">
-                <select id="reasoning-group-select"><option value="">No Group</option></select>
-                <button onclick="addTopic('reasoning')">+</button>
-            </div>
-            <ul class="topic-list" id="reasoning-list"></ul>
-            
-            <div class="panel-box" style="margin-top:20px;">
-                <h4>Group Management Dashboard</h4>
-                <div class="input-group"><input type="text" id="reasoning-new-group-name" placeholder="New group name..."><button onclick="createNewGroup('reasoning')">Add</button></div>
-                <ul class="mgmt-list" id="reasoning-mgmt-list"></ul>
-            </div>
-        </div>
-
-        <div class="subject-card" id="ga-card">
-            <div class="subject-header"><h2 class="subject-title">General Awareness</h2><span class="baseline-badge" id="ga-baseline">Avg: 0</span></div>
-            <div class="sub-group-bar" id="ga-groups-bar"></div>
-            
-            <div class="input-group">
-                <input type="text" id="ga-input" placeholder="Topic title...">
-                <select id="ga-group-select"><option value="">No Group</option></select>
-                <button onclick="addTopic('ga')">+</button>
-            </div>
-            <ul class="topic-list" id="ga-list"></ul>
-            
-            <div class="panel-box" style="margin-top:20px;">
-                <h4>Group Management Dashboard</h4>
-                <div class="input-group"><input type="text" id="ga-new-group-name" placeholder="New group name..."><button onclick="createNewGroup('ga')">Add</button></div>
-                <ul class="mgmt-list" id="ga-mgmt-list"></ul>
-            </div>
-        </div>
-
-        <!-- Clipboard Storage Backup Panel Box -->
+        <!-- Clipboard Snippet String Storage Engine Panel Window -->
         <div class="backup-card">
             <h3>Fail-Safe Clipboard Backup Guard</h3>
-            <textarea id="backup-code-box" class="backup-textarea" placeholder="Your data snippet string code configuration is updated automatically..." readonly onclick="this.select();"></textarea>
+            <textarea id="backup-code-box" class="backup-textarea" placeholder="Your tracker string code is loaded automatically..." readonly onclick="this.select();"></textarea>
             <div class="backup-btn-group">
                 <button class="btn-backup" onclick="copyBackupToClipboard()">Copy Backup Code</button>
                 <button class="btn-backup restore" onclick="pasteRestoreFromClipboard()">Paste & Restore Code</button>
@@ -273,22 +272,28 @@
     </div>
 
     <script>
-        let trackerData = JSON.parse(localStorage.getItem('sscV8_Data')) || {
+        // Versioned Local Database Storage Initialization Schema mapping pointers maps
+        let trackerData = JSON.parse(localStorage.getItem('sscV9_Data')) || {
             english: [], maths: [], reasoning: [], ga: []
         };
 
-        let subGroupsMap = JSON.parse(localStorage.getItem('sscV8_Groups')) || {
+        let subGroupsMap = JSON.parse(localStorage.getItem('sscV9_Groups')) || {
             english: [], maths: [], reasoning: [], ga: []
+        };
+
+        let targetThresholds = JSON.parse(localStorage.getItem('sscV9_Targets')) || {
+            english: 100, maths: 100, reasoning: 100, ga: 100
         };
 
         let activeGroupFilters = { english: "ALL", maths: "ALL", reasoning: "ALL", ga: "ALL" };
-        let autoSortActive = JSON.parse(localStorage.getItem('sscV8_Sort')) || false;
-        let currentTab = 'english';
+        let autoSortActive = JSON.parse(localStorage.getItem('sscV9_Sort')) || false;
+        let currentTab = 'dash';
 
         function saveData() {
-            localStorage.setItem('sscV8_Data', JSON.stringify(trackerData));
-            localStorage.setItem('sscV8_Groups', JSON.stringify(subGroupsMap));
-            localStorage.setItem('sscV8_Sort', JSON.stringify(autoSortActive));
+            localStorage.setItem('sscV9_Data', JSON.stringify(trackerData));
+            localStorage.setItem('sscV9_Groups', JSON.stringify(subGroupsMap));
+            localStorage.setItem('sscV9_Targets', JSON.stringify(targetThresholds));
+            localStorage.setItem('sscV9_Sort', JSON.stringify(autoSortActive));
             updateBackupCodeBoxState();
         }
 
@@ -296,12 +301,29 @@
             currentTab = subject;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.subject-card').forEach(card => card.classList.remove('active'));
+
             document.getElementById(`btn-tab-${subject}`).classList.add('active');
             document.getElementById(`${subject}-card`).classList.add('active');
+            
+            // Toggle visibility of global filters sorting bar only on real content tabs workspaces
+            const sortingRow = document.getElementById('sorting-toggle-row');
+            if(subject === 'dash') {
+                sortingRow.style.display = 'none';
+            } else {
+                sortingRow.style.display = 'flex';
+            }
+            render();
         }
 
         function toggleSort() {
             autoSortActive = document.getElementById('global-sort-toggle').checked;
+            saveData();
+            render();
+        }
+
+        function updateTargetThreshold(subject) {
+            const inputVal = parseInt(document.getElementById(`${subject}-target-val`).value);
+            targetThresholds[subject] = isNaN(inputVal) || inputVal <= 0 ? 100 : inputVal;
             saveData();
             render();
         }
@@ -360,7 +382,14 @@
                 alert("This topic already exists!");
                 return;
             }
-            trackerData[subject].push({ name: name, questions: 0, group: chosenGroup });
+            
+            // Assign active server clock tracking timestamp layer elements data variables
+            trackerData[subject].push({ 
+                name: name, 
+                questions: 0, 
+                group: chosenGroup,
+                lastUpdated: Date.now() 
+            });
             inputField.value = "";
             saveData();
             render();
@@ -375,6 +404,9 @@
         function updateCount(subject, index, change) {
             trackerData[subject][index].questions += change;
             if (trackerData[subject][index].questions < 0) trackerData[subject][index].questions = 0;
+            
+            // Re-stamp interactive execution clock cycle time variables
+            trackerData[subject][index].lastUpdated = Date.now();
             saveData();
             render();
         }
@@ -397,7 +429,6 @@
 
         function moveItemInFilterContext(subject, pointerIndex, direction, currentFilter) {
             const globalList = trackerData[subject];
-            
             let filteredIndices = [];
             globalList.forEach((item, idx) => {
                 if (currentFilter === "ALL" || item.group === currentFilter) {
@@ -407,12 +438,10 @@
 
             const positionalIndex = filteredIndices.indexOf(pointerIndex);
             if (positionalIndex === -1) return;
-
             const targetPositionalIndex = positionalIndex + direction;
             if (targetPositionalIndex < 0 || targetPositionalIndex >= filteredIndices.length) return;
 
             const targetGlobalIndex = filteredIndices[targetPositionalIndex];
-
             const temp = globalList[pointerIndex];
             globalList[pointerIndex] = globalList[targetGlobalIndex];
             globalList[targetGlobalIndex] = temp;
@@ -422,7 +451,7 @@
         }
 
         function updateBackupCodeBoxState() {
-            const packageData = { trackerData: trackerData, subGroupsMap: subGroupsMap };
+            const packageData = { trackerData: trackerData, subGroupsMap: subGroupsMap, targetThresholds: targetThresholds };
             document.getElementById('backup-code-box').value = btoa(encodeURIComponent(JSON.stringify(packageData)));
         }
 
@@ -444,43 +473,52 @@
                     clearText = clearText.replace("const sscBackupData = ", "");
                     if (clearText.endsWith(";")) clearText = clearText.slice(0, -1);
                 }
-                
-                // If the pasted file features old data schemas, map remaining "General" definitions out safely
-                if (clearText.startsWith("{")) {
-                    parsedData = JSON.parse(clearText);
-                } else {
-                    parsedData = JSON.parse(decodeURIComponent(atob(input)));
-                }
+                if (clearText.startsWith("{")) parsedData = JSON.parse(clearText);
+                else parsedData = JSON.parse(decodeURIComponent(atob(input)));
 
                 if (parsedData.trackerData && parsedData.subGroupsMap) {
-                    // Clean legacy "General" properties values directly from import objects profiles
+                    // Safety mapping filter transformations layer configuration setups
                     for (let s in parsedData.subGroupsMap) {
                         parsedData.subGroupsMap[s] = parsedData.subGroupsMap[s].filter(g => g !== "General");
                     }
                     for (let s in parsedData.trackerData) {
                         parsedData.trackerData[s].forEach(t => {
                             if (t.group === "General") t.group = "";
+                            // Back-populate missing configuration date timestamps if restoring legacy data logs
+                            if (!t.lastUpdated) t.lastUpdated = Date.now();
                         });
                     }
 
                     trackerData = parsedData.trackerData;
                     subGroupsMap = parsedData.subGroupsMap;
-                    saveData(); render(); alert("Syllabus fully recovered!");
+                    if(parsedData.targetThresholds) targetThresholds = parsedData.targetThresholds;
+                    
+                    saveData(); switchTab('dash'); alert("Syllabus database fully restored!");
                 }
-            } catch (err) { alert("Failed to read snippet string data configuration details."); }
+            } catch (err) { alert("Failed to read snippet string data configurations."); }
         }
 
+        /* Master Graphics Renderer Canvas Layout Engine */
         function render() {
             const subjects = ['english', 'maths', 'reasoning', 'ga'];
             document.getElementById('global-sort-toggle').checked = autoSortActive;
 
+            // Global dashboard calculations aggregation layer values
+            let aggregateQuestionsCount = 0;
+            let aggregateStaleTopicsCount = 0;
+            const msIn14Days = 14 * 24 * 60 * 60 * 1000;
+
             subjects.forEach(subject => {
                 const listElement = document.getElementById(`${subject}-list`);
                 const baselineElement = document.getElementById(`${subject}-baseline`);
+                const totalQuestionsBadge = document.getElementById(`${subject}-total-badge`);
                 const groupsBar = document.getElementById(`${subject}-groups-bar`);
                 const selectDropdown = document.getElementById(`${subject}-group-select`);
                 const mgmtList = document.getElementById(`${subject}-mgmt-list`);
                 
+                // Sync baseline threshold configurations UI value inputs states fields
+                document.getElementById(`${subject}-target-val`).value = targetThresholds[subject];
+
                 listElement.innerHTML = ""; groupsBar.innerHTML = ""; selectDropdown.innerHTML = ""; mgmtList.innerHTML = "";
                 const activeFilter = activeGroupFilters[subject];
 
@@ -512,7 +550,7 @@
                     mLi.innerHTML = `
                         <span>${group}</span>
                         <div class="mgmt-actions">
-                            <button class="btn-mgmt-action" onclick="renameGroup('${subject}', '${group}')" style="color:#2c3e50;">✎</button>
+                            <button class="btn-mgmt-action" onclick="renameGroup('${subject}', '${group}')">✎</button>
                             <button class="btn-mgmt-action" onclick="deleteGroup('${subject}', '${group}')" style="color:#ff7675;">×</button>
                         </div>
                     `;
@@ -520,16 +558,42 @@
                 });
 
                 let topicsList = trackerData[subject];
-                let average = 0;
                 
-                // SMART BASELINE ENGINE: Filters out any unattempted topics (0 questions)
-                let attemptedTopics = topicsList.filter(item => item.questions > 0);
-                if (attemptedTopics.length > 0) {
-                    const total = attemptedTopics.reduce((sum, item) => sum + item.questions, 0);
-                    average = total / attemptedTopics.length;
+                // Compute total sums parameters
+                let subjectTotalQuestionsSum = topicsList.reduce((sum, item) => sum + item.questions, 0);
+                aggregateQuestionsCount += subjectTotalQuestionsSum;
+                totalQuestionsBadge.innerText = `Total Q: ${subjectTotalQuestionsSum}`;
+
+                // SMART CRITERIA AMENDMENT BASELINE ENGINE CALCULATOR
+                let average = 0;
+                let attemptedTopicsList = topicsList.filter(item => item.questions > 0);
+                if (attemptedTopicsList.length > 0) {
+                    average = subjectTotalQuestionsSum / attemptedTopicsList.length;
                 }
                 baselineElement.innerText = `Avg: ${average.toFixed(1)}`;
 
+                // Track metrics mapping distributions for rendering progress visualization charts components
+                let greenTopicsCount = 0;
+                topicsList.forEach(topic => {
+                    // Scan time decay stale layers parameters flags
+                    if (topic.questions > 0 && (Date.now() - topic.lastUpdated) > msIn14Days) {
+                        aggregateStaleTopicsCount++;
+                    }
+                    if (topic.questions > 0 && topic.questions >= average) {
+                        greenTopicsCount++;
+                    }
+                });
+
+                // Compute progress percentages formulas ratios profiles targets configurations
+                let totalTopicsInSubjectCount = topicsList.length;
+                let subjectProgressPercentage = totalTopicsInSubjectCount > 0 ? (greenTopicsCount / totalTopicsInSubjectCount) * 100 : 0;
+                
+                // Sync calculated values directly across active Dashboard nodes DOM slots
+                const targetKeyMap = { english: 'eng', maths: 'maths', reasoning: 'reas', ga: 'ga' }[subject];
+                document.getElementById(`dash-${targetKeyMap}-metrics`).innerText = `${Math.round(subjectProgressPercentage)}% (${greenTopicsCount}/${totalTopicsInSubjectCount})`;
+                document.getElementById(`bar-${targetKeyMap}`).style.width = `${subjectProgressPercentage}%`;
+
+                // Handle item formatting filters sorting actions pipelines arrays transformations
                 let outputItems = topicsList.map((item, idx) => ({ ...item, pointerIndex: idx }));
                 if (activeFilter !== "ALL") {
                     outputItems = outputItems.filter(item => {
@@ -547,9 +611,21 @@
 
                 outputItems.forEach((topic) => {
                     const li = document.createElement('li');
+                    
+                    // Core relative color mapping states definitions layers
+                    let isTargetMilestoneCleared = topic.questions >= targetThresholds[subject];
+                    let isStale = topic.questions > 0 && (Date.now() - topic.lastUpdated) > msIn14Days;
+
                     if (topic.questions === 0) li.className = "topic-item status-untouched";
                     else if (topic.questions < average) li.className = "topic-item status-below-avg";
                     else li.className = "topic-item status-good";
+
+                    // Dynamic element custom tracking borders overrides signaling Target Milestone Completion status layers
+                    if (topic.questions > 0 && isTargetMilestoneCleared) {
+                        li.style.borderLeft = "6px solid #2ed573";
+                    } else if (topic.questions > 0) {
+                        li.style.borderLeft = "6px solid #eccc68";
+                    }
 
                     li.innerHTML = `
                         <div class="topic-main-row">
@@ -557,6 +633,8 @@
                                 <div class="topic-inline-heading">
                                     <span class="topic-name" id="text-${subject}-${topic.pointerIndex}">${topic.name}</span>
                                     ${topic.group ? `<span class="group-tag-label">${topic.group}</span>` : ''}
+                                    ${isStale ? `<span class="stale-badge">⏱ Review Stale</span>` : ''}
+                                    ${isTargetMilestoneCleared ? `<span class="group-tag-label" style="background:#55efc4; color:#2d3436;">🎯 Done</span>` : ''}
                                 </div>
                             </div>
                             <div class="action-row-buttons">
@@ -582,9 +660,14 @@
                     listElement.appendChild(li);
                 });
             });
+
+            // Paint overall top level active metrics layers slots summaries elements structures
+            document.getElementById('dash-total-q').innerText = aggregateQuestionsCount;
+            document.getElementById('dash-total-stale').innerText = aggregateStaleTopicsCount;
             updateBackupCodeBoxState();
         }
 
+        // Initialize Workspace Display Engine canvas rendering runs loops
         render();
     </script>
 </body>
