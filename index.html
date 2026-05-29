@@ -33,7 +33,6 @@
         p { font-size: 0.8rem; margin: 0; color: var(--text-muted); }
         .container { width: 100%; max-width: 500px; margin: 0 auto; }
 
-        /* Main Nav Grid Bars Setup */
         .tabs-nav {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -63,7 +62,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* Dashboard UI Elements */
         .dashboard-grid { display: flex; flex-direction: column; gap: 12px; }
         .stat-row-card { background: var(--card-bg); padding: 14px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); border-left: 4px solid var(--primary-purple); }
         .stat-row-card h3 { margin: 0 0 6px 0; font-size: 0.95rem; color: var(--text-dark); }
@@ -76,11 +74,9 @@
         .subject-summary-item { background: var(--card-bg); padding: 12px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 6px; }
         .subject-summary-item .meta-line { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: bold; }
         
-        /* Metric Progress Bars Styles */
         .progress-wrapper { width: 100%; background-color: #edf2f7; border-radius: 20px; height: 8px; overflow: hidden; position: relative; }
         .progress-bar { background: linear-gradient(90deg, var(--primary-light), var(--primary-purple)); height: 100%; border-radius: 20px; width: 0%; transition: width 0.4s ease; }
 
-        /* Sub Group Filter Navigation Layout Pill Modules */
         .sub-group-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; background: rgba(0, 0, 0, 0.03); padding: 6px; border-radius: 8px; }
         .group-pill-wrapper { display: inline-flex; align-items: center; background: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 20px; padding: 6px 14px; cursor: pointer; }
         .group-pill-wrapper.active { background: var(--primary-purple); color: white; border-color: var(--primary-purple); }
@@ -95,7 +91,6 @@
         .mgmt-actions { display: flex; gap: 4px; }
         .btn-mgmt-action { background: none; border: none; font-size: 0.9rem; cursor: pointer; padding: 2px 6px; }
 
-        /* Dynamic Subject Windows Structures Framework layout mapping components */
         .subject-card { background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); padding: 15px; display: none; }
         .subject-card.active { display: flex; flex-direction: column; }
         .subject-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
@@ -121,7 +116,6 @@
         .input-group select { background: white; max-width: 120px; font-size: 0.8rem; font-weight: 600; }
         .input-group button { background: var(--primary-purple); color: white; border: none; padding: 0 14px; font-size: 1.1rem; border-radius: 8px; }
 
-        /* Core Topics Drawing Canvas Elements Layout */
         .topic-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
         .topic-item { display: flex; flex-direction: column; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--card-bg); gap: 8px; }
         .status-untouched { background-color: var(--flag-red); border-color: #e17055; }
@@ -134,7 +128,6 @@
         .topic-name { font-weight: 600; font-size: 0.95rem; word-break: break-word; }
         .group-tag-label { font-size: 0.7rem; background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* Time Stale 14 Day Notification Badging */
         .stale-badge { font-size: 0.7rem; background: #ffeaa7; color: #d63031; border: 1px solid #fdcb6e; padding: 2px 6px; border-radius: 4px; font-weight: bold; animation: pulse 2s infinite; display: inline-flex; align-items: center; gap: 2px;}
         @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
 
@@ -165,7 +158,7 @@
     </header>
 
     <div class="container">
-        <!-- Main Top Level Navigation Array -->
+        <!-- Main Top Level Navigation Grid -->
         <div class="tabs-nav">
             <button class="tab-btn active" id="btn-tab-dash" onclick="switchTab('dash')">Dash</button>
             <button class="tab-btn" id="btn-tab-english" onclick="switchTab('english')">Eng</button>
@@ -174,7 +167,7 @@
             <button class="tab-btn" id="btn-tab-ga" onclick="switchTab('ga')">GA</button>
         </div>
 
-        <!-- Dashboard Core Content Panel Module Window Frame -->
+        <!-- Dashboard Panel View -->
         <div class="subject-card active" id="dash-card">
             <div class="dashboard-grid">
                 <div class="stat-row-card">
@@ -260,7 +253,7 @@
             </label>
         </div>
 
-        <!-- Clipboard Snippet String Storage Engine Panel Window -->
+        <!-- Clipboard Storage Backup Panel Window -->
         <div class="backup-card">
             <h3>Fail-Safe Clipboard Backup Guard</h3>
             <textarea id="backup-code-box" class="backup-textarea" placeholder="Your tracker string code is loaded automatically..." readonly onclick="this.select();"></textarea>
@@ -272,7 +265,6 @@
     </div>
 
     <script>
-        // Versioned Local Database Storage Initialization Schema mapping pointers maps
         let trackerData = JSON.parse(localStorage.getItem('sscV9_Data')) || {
             english: [], maths: [], reasoning: [], ga: []
         };
@@ -305,7 +297,6 @@
             document.getElementById(`btn-tab-${subject}`).classList.add('active');
             document.getElementById(`${subject}-card`).classList.add('active');
             
-            // Toggle visibility of global filters sorting bar only on real content tabs workspaces
             const sortingRow = document.getElementById('sorting-toggle-row');
             if(subject === 'dash') {
                 sortingRow.style.display = 'none';
@@ -383,7 +374,6 @@
                 return;
             }
             
-            // Assign active server clock tracking timestamp layer elements data variables
             trackerData[subject].push({ 
                 name: name, 
                 questions: 0, 
@@ -405,7 +395,6 @@
             trackerData[subject][index].questions += change;
             if (trackerData[subject][index].questions < 0) trackerData[subject][index].questions = 0;
             
-            // Re-stamp interactive execution clock cycle time variables
             trackerData[subject][index].lastUpdated = Date.now();
             saveData();
             render();
@@ -462,6 +451,11 @@
             navigator.clipboard.writeText(box.value).then(() => { alert("Syllabus backup code copied!"); });
         }
 
+        /* 
+           SMART RECOVERY ENGINE
+           Patched to automatically generate default threshold parameters on-the-fly 
+           if reading an older file-based backup structure data map.
+        */
         function pasteRestoreFromClipboard() {
             let input = prompt("Paste backup string code snippet text here:");
             if (!input || input.trim() === "") return;
@@ -473,37 +467,42 @@
                     clearText = clearText.replace("const sscBackupData = ", "");
                     if (clearText.endsWith(";")) clearText = clearText.slice(0, -1);
                 }
-                if (clearText.startsWith("{")) parsedData = JSON.parse(clearText);
-                else parsedData = JSON.parse(decodeURIComponent(atob(input)));
+                if (clearText.startsWith("{")) {
+                    parsedData = JSON.parse(clearText);
+                } else {
+                    parsedData = JSON.parse(decodeURIComponent(atob(input)));
+                }
 
                 if (parsedData.trackerData && parsedData.subGroupsMap) {
-                    // Safety mapping filter transformations layer configuration setups
                     for (let s in parsedData.subGroupsMap) {
                         parsedData.subGroupsMap[s] = parsedData.subGroupsMap[s].filter(g => g !== "General");
                     }
                     for (let s in parsedData.trackerData) {
                         parsedData.trackerData[s].forEach(t => {
                             if (t.group === "General") t.group = "";
-                            // Back-populate missing configuration date timestamps if restoring legacy data logs
                             if (!t.lastUpdated) t.lastUpdated = Date.now();
                         });
                     }
 
                     trackerData = parsedData.trackerData;
                     subGroupsMap = parsedData.subGroupsMap;
-                    if(parsedData.targetThresholds) targetThresholds = parsedData.targetThresholds;
+                    
+                    // FAIL-SAFE PATCH: Auto-generate targets layer if missing
+                    if (parsedData.targetThresholds) {
+                        targetThresholds = parsedData.targetThresholds;
+                    } else {
+                        targetThresholds = { english: 100, maths: 100, reasoning: 100, ga: 100 };
+                    }
                     
                     saveData(); switchTab('dash'); alert("Syllabus database fully restored!");
                 }
             } catch (err) { alert("Failed to read snippet string data configurations."); }
         }
 
-        /* Master Graphics Renderer Canvas Layout Engine */
         function render() {
             const subjects = ['english', 'maths', 'reasoning', 'ga'];
             document.getElementById('global-sort-toggle').checked = autoSortActive;
 
-            // Global dashboard calculations aggregation layer values
             let aggregateQuestionsCount = 0;
             let aggregateStaleTopicsCount = 0;
             const msIn14Days = 14 * 24 * 60 * 60 * 1000;
@@ -516,7 +515,6 @@
                 const selectDropdown = document.getElementById(`${subject}-group-select`);
                 const mgmtList = document.getElementById(`${subject}-mgmt-list`);
                 
-                // Sync baseline threshold configurations UI value inputs states fields
                 document.getElementById(`${subject}-target-val`).value = targetThresholds[subject];
 
                 listElement.innerHTML = ""; groupsBar.innerHTML = ""; selectDropdown.innerHTML = ""; mgmtList.innerHTML = "";
@@ -559,7 +557,6 @@
 
                 let topicsList = trackerData[subject];
                 
-                // Compute total sums parameters
                 let subjectTotalQuestionsSum = topicsList.reduce((sum, item) => sum + item.questions, 0);
                 aggregateQuestionsCount += subjectTotalQuestionsSum;
                 totalQuestionsBadge.innerText = `Total Q: ${subjectTotalQuestionsSum}`;
@@ -572,10 +569,8 @@
                 }
                 baselineElement.innerText = `Avg: ${average.toFixed(1)}`;
 
-                // Track metrics mapping distributions for rendering progress visualization charts components
                 let greenTopicsCount = 0;
                 topicsList.forEach(topic => {
-                    // Scan time decay stale layers parameters flags
                     if (topic.questions > 0 && (Date.now() - topic.lastUpdated) > msIn14Days) {
                         aggregateStaleTopicsCount++;
                     }
@@ -584,16 +579,13 @@
                     }
                 });
 
-                // Compute progress percentages formulas ratios profiles targets configurations
                 let totalTopicsInSubjectCount = topicsList.length;
                 let subjectProgressPercentage = totalTopicsInSubjectCount > 0 ? (greenTopicsCount / totalTopicsInSubjectCount) * 100 : 0;
                 
-                // Sync calculated values directly across active Dashboard nodes DOM slots
                 const targetKeyMap = { english: 'eng', maths: 'maths', reasoning: 'reas', ga: 'ga' }[subject];
                 document.getElementById(`dash-${targetKeyMap}-metrics`).innerText = `${Math.round(subjectProgressPercentage)}% (${greenTopicsCount}/${totalTopicsInSubjectCount})`;
                 document.getElementById(`bar-${targetKeyMap}`).style.width = `${subjectProgressPercentage}%`;
 
-                // Handle item formatting filters sorting actions pipelines arrays transformations
                 let outputItems = topicsList.map((item, idx) => ({ ...item, pointerIndex: idx }));
                 if (activeFilter !== "ALL") {
                     outputItems = outputItems.filter(item => {
@@ -612,7 +604,6 @@
                 outputItems.forEach((topic) => {
                     const li = document.createElement('li');
                     
-                    // Core relative color mapping states definitions layers
                     let isTargetMilestoneCleared = topic.questions >= targetThresholds[subject];
                     let isStale = topic.questions > 0 && (Date.now() - topic.lastUpdated) > msIn14Days;
 
@@ -620,7 +611,6 @@
                     else if (topic.questions < average) li.className = "topic-item status-below-avg";
                     else li.className = "topic-item status-good";
 
-                    // Dynamic element custom tracking borders overrides signaling Target Milestone Completion status layers
                     if (topic.questions > 0 && isTargetMilestoneCleared) {
                         li.style.borderLeft = "6px solid #2ed573";
                     } else if (topic.questions > 0) {
@@ -661,13 +651,11 @@
                 });
             });
 
-            // Paint overall top level active metrics layers slots summaries elements structures
             document.getElementById('dash-total-q').innerText = aggregateQuestionsCount;
             document.getElementById('dash-total-stale').innerText = aggregateStaleTopicsCount;
             updateBackupCodeBoxState();
         }
 
-        // Initialize Workspace Display Engine canvas rendering runs loops
         render();
     </script>
 </body>
