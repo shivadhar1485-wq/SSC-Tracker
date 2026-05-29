@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSC Syllabus Tracker</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --primary-purple: #6c5ce7;
+            --primary-light: #a29bfe;
+            --flag-red: #ff7675;
+            --flag-yellow: #ffeaa7;
+            --flag-green: #55efc4;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            color: var(--primary-purple);
+            margin-bottom: 5px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Tabs Navigation Styling */
+        .tabs-nav {
+            display: flex;
+            gap: 5px;
+            margin-bottom: -2px; /* Pulls navigation tight against the content card */
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background-color: #e0e0e0;
+            border: 2px solid var(--border-color);
+            border-bottom: none;
+            padding: 12px 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            transition: all 0.2s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            background-color: #ededed;
+            color: var(--text-color);
+        }
+
+        .tab-btn.active {
+            background-color: var(--card-bg);
+            color: var(--primary-purple);
+            border-color: var(--primary-purple) var(--primary-purple) transparent var(--primary-purple);
+            border-top: 4px solid var(--primary-purple);
+            padding-top: 10px; /* Adjusts for thicker top border */
+        }
+
+        /* Subject Content Card Window */
+        .subject-card {
+            background: var(--card-bg);
+            border-radius: 0 0 8px 8px;
+            border: 2px solid var(--primary-purple);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+            padding: 25px;
+            display: none; /* Hidden by default */
+        }
+
+        .subject-card.active {
+            display: flex; /* Shown when active */
+            flex-direction: column;
+        }
+
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 12px;
+        }
+
+        .subject-title {
+            margin: 0;
+            font-size: 1.6rem;
+            color: var(--primary-purple);
+        }
+
+        .baseline-badge {
+            font-size: 0.95rem;
+            background: var(--bg-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            border: 1px solid var(--border-color);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-light);
+        }
+
+        .input-group button {
+            background: var(--primary-purple);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            font-size: 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .input-group button:hover {
+            background-color: #5b4cc4;
+        }
+
+        .topic-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .topic-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            transition: background-color 0.2s ease;
+        }
+
+        /* Flagging Status Colors */
+        .status-untouched {
+            background-color: var(--flag-red);
+            border-color: #d63031;
+        }
+
+        .status-below-avg {
+            background-color: var(--flag-yellow);
+            border-color: #fdcb6e;
+        }
+
+        .status-good {
+            background-color: var(--flag-green);
+            border-color: #00b894;
+        }
+
+        .topic-name {
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .question-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .q-count {
+            width: 55px;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid rgba(0,0,0,0.15);
+            background: rgba(255,255,255,0.6);
+            border-radius: 4px;
+            padding: 4px 2px;
+        }
+
+        .btn-q {
+            background: rgba(255,255,255,0.7);
+            border: 1px solid rgba(0,0,0,0.15);
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-q:hover {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .btn-delete {
+            background: transparent;
+            border: none;
+            color: #c0392b;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 12px;
+            padding: 0 5px;
+        }
+
+        .btn-delete:hover {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SSC Syllabus Tracker</h1>
+        <p>Colors: Red = 0 | Yellow = Below Subject Average | Green = Target Cleared</p>
+    </header>
+
+    <div class="container">
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('english')">English</button>
+            <button class="tab-btn" onclick="switchTab('maths')">Maths</button>
+            <button class="tab-btn" onclick="switchTab('reasoning')">Reasoning</button>
+            <button class="tab-btn" onclick="switchTab('ga')">GA</button>
+        </div>
+
+        <div class="subject-card active" id="english-card">
+            <div class="subject-header">
+                <h2 class="subject-title">English Language</h2>
+                <span class="baseline-badge" id="english-baseline">Avg: 0</span>
+            </div>
+            <div class="input-group">
+                <input type="text" id="english-input" placeholder="Add English topic...">
+                <button onclick="addTopic('english')">+</button>
+            </div>
+            <ul class="topic-list" id="english-list"></ul>
+        </div>
+
+        <div class="subject-card" id="maths-card">
+            <div class="subject-header">
+                <h2 class="subject-title">Quantitative Aptitude</h2>
+                <span class="baseline-badge" id="maths-baseline">Avg: 0</span>
+            </div>
+            <div class="input-group">
+                <input type="text" id="maths-input" placeholder="Add Maths topic...">
+                <button onclick="addTopic('maths')">+</button>
+            </div>
+            <ul class="topic-list" id="maths-list"></ul>
+        </div>
+
+        <div class="subject-card" id="reasoning-card">
+            <div class="subject-header">
+                <h2 class="subject-title">General Intelligence & Reasoning</h2>
+                <span class="baseline-badge" id="reasoning-baseline">Avg: 0</span>
+            </div>
+            <div class="input-group">
+                <input type="text" id="reasoning-input" placeholder="Add Reasoning topic...">
+                <button onclick="addTopic('reasoning')">+</button>
+            </div>
+            <ul class="topic-list" id="reasoning-list"></ul>
+        </div>
+
+        <div class="subject-card" id="ga-card">
+            <div class="subject-header">
+                <h2 class="subject-title">General Awareness</h2>
+                <span class="baseline-badge" id="ga-baseline">Avg: 0</span>
+            </div>
+            <div class="input-group">
+                <input type="text" id="ga-input" placeholder="Add GA topic...">
+                <button onclick="addTopic('ga')">+</button>
+            </div>
+            <ul class="topic-list" id="ga-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Data Structure state initialized from localStorage or empty arrays
+        let trackerData = JSON.parse(localStorage.getItem('sscTrackerData')) || {
+            english: [],
+            maths: [],
+            reasoning: [],
+            ga: []
+        };
+
+        // Variable tracking which tab is open so it stays open during data refreshes
+        let currentActiveTab = 'english';
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('sscTrackerData', JSON.stringify(trackerData));
+        }
+
+        // Handle swapping tabs
+        function switchTab(subject) {
+            currentActiveTab = subject;
+            
+            // Remove 'active' classes from all tabs and cards
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.subject-card').forEach(card => card.classList.remove('active'));
+
+            // Add 'active' class to target tab button and card frame
+            // The button target matches order or custom selector strategy
+            const targetIndex = ['english', 'maths', 'reasoning', 'ga'].indexOf(subject);
+            document.querySelectorAll('.tab-btn')[targetIndex].classList.add('active');
+            document.getElementById(`${subject}-card`).classList.add('active');
+        }
+
+        // Add a new topic to a subject
+        function addTopic(subject) {
+            const inputField = document.getElementById(`${subject}-input`);
+            const topicName = inputField.value.trim();
+
+            if (topicName === "") return;
+
+            const exists = trackerData[subject].some(t => t.name.toLowerCase() === topicName.toLowerCase());
+            if (exists) {
+                alert("Topic already exists!");
+                return;
+            }
+
+            trackerData[subject].push({
+                name: topicName,
+                questions: 0
+            });
+
+            inputField.value = "";
+            saveData();
+            render();
+        }
+
+        // Remove a topic
+        function removeTopic(subject, index) {
+            trackerData[subject].splice(index, 1);
+            saveData();
+            render();
+        }
+
+        // Update question counts 
+        function updateCount(subject, index, change) {
+            trackerData[subject][index].questions += change;
+            if (trackerData[subject][index].questions < 0) {
+                trackerData[subject][index].questions = 0;
+            }
+            saveData();
+            render();
+        }
+
+        // Render everything to the screen
+        function render() {
+            const subjects = ['english', 'maths', 'reasoning', 'ga'];
+
+            subjects.forEach(subject => {
+                const listElement = document.getElementById(`${subject}-list`);
+                const baselineElement = document.getElementById(`${subject}-baseline`);
+                listElement.innerHTML = "";
+
+                const topics = trackerData[subject];
+                
+                // Calculate Average Baseline
+                let average = 0;
+                if (topics.length > 0) {
+                    const totalQuestions = topics.reduce((sum, item) => sum + item.questions, 0);
+                    average = totalQuestions / topics.length;
+                }
+                
+                baselineElement.innerText = `Avg: ${average.toFixed(1)}`;
+
+                // Generate HTML for each item
+                topics.forEach((topic, index) => {
+                    const li = document.createElement('li');
+                    
+                    if (topic.questions === 0) {
+                        li.className = "topic-item status-untouched";
+                    } else if (topic.questions < average) {
+                        li.className = "topic-item status-below-avg";
+                    } else {
+                        li.className = "topic-item status-good";
+                    }
+
+                    li.innerHTML = `
+                        <div class="topic-info">
+                            <span class="topic-name">${topic.name}</span>
+                        </div>
+                        <div class="question-controls">
+                            <button class="btn-q" onclick="updateCount('${subject}', ${index}, -5)">-5</button>
+                            <button class="btn-q" onclick="updateCount('${subject}', ${index}, -1)">-</button>
+                            <span class="q-count">${topic.questions}</span>
+                            <button class="btn-q" onclick="updateCount('${subject}', ${index}, 1)">+</button>
+                            <button class="btn-q" onclick="updateCount('${subject}', ${index}, 5)">+5</button>
+                            <button class="btn-delete" onclick="removeTopic('${subject}', ${index})" title="Delete Topic">🗑</button>
+                        </div>
+                    `;
+                    listElement.appendChild(li);
+                });
+            });
+        }
+
+        // Initial render run on page load
+        render();
+    </script>
+</body>
+</html>
