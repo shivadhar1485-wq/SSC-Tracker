@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SSC Syllabus Tracker - Elite Edition</title>
+    <title>SSC Syllabus Tracker</title>
     <style>
         :root {
             --bg-color: #f1f2f6;
@@ -142,12 +142,18 @@
         .btn-q { background: #ffffff; border: 1px solid rgba(0,0,0,0.15); min-width: 36px; height: 36px; font-size: 0.85rem; font-weight: bold; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
         .q-count { min-width: 40px; text-align: center; font-weight: bold; font-size: 0.95rem; }
 
+        /* Advanced Storage Clipboard Input Window Mechanics */
         .backup-card { background: #e2e8f0; border-radius: 10px; padding: 12px; margin-top: 20px; border: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 8px; }
         .backup-card h3 { margin: 0; font-size: 0.9rem; color: #475569; }
         .backup-textarea { width: 100%; height: 70px; font-family: monospace; font-size: 0.75rem; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box; resize: none; background: #fff; color: #333; }
         .backup-btn-group { display: flex; gap: 8px; }
         .btn-backup { flex: 1; background: #475569; color: white; border: none; padding: 12px 6px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; text-align: center; }
         .btn-backup.restore { background: #2d3748; }
+
+        /* Native high capacity drop panel for mobile pasting limit overrides */
+        .restore-drop-window { display: none; flex-direction: column; gap: 8px; background: #cbd5e1; padding: 10px; border-radius: 6px; margin-top: 5px; }
+        .restore-drop-window.active { display: flex; }
+        .restore-input-area { width: 100%; height: 100px; font-family: monospace; font-size: 0.75rem; padding: 6px; border-radius: 4px; border: 1px solid #94a3b8; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -248,10 +254,15 @@
 
         <div class="backup-card">
             <h3>Fail-Safe Clipboard Backup Guard</h3>
-            <textarea id="backup-code-box" class="backup-textarea" placeholder="Your tracker string code is loaded automatically..." readonly onclick="this.select();"></textarea>
+            <textarea id="backup-code-box" class="backup-textarea" placeholder="Your data snapshot string code is loaded automatically..." readonly onclick="this.select();"></textarea>
             <div class="backup-btn-group">
                 <button class="btn-backup" onclick="copyBackupToClipboard()">Copy Backup Code</button>
-                <button class="btn-backup restore" onclick="pasteRestoreFromClipboard()">Paste & Restore Code</button>
+                <button class="btn-backup restore" onclick="toggleRestoreWindow()">Load Old Backup Window</button>
+            </div>
+            
+            <div class="restore-drop-window" id="mobile-restore-gate">
+                <textarea id="mobile-paste-area" class="restore-input-area" placeholder="Paste your massive backup text block here..."></textarea>
+                <button class="btn-backup restore" onclick="executeNativeImportPipeline()" style="background:#10b981;">Confirm & Restore Database</button>
             </div>
         </div>
     </div>
@@ -443,13 +454,17 @@
             navigator.clipboard.writeText(box.value).then(() => { alert("Syllabus backup code copied!"); });
         }
 
-        /* UNIVERSAL PARSER CORRECTION ENGINE
-           Forced to strip out legacy "General" map nodes dynamically whether encrypted or clean JSON format string.
+        function toggleRestoreWindow() {
+            document.getElementById('mobile-restore-gate').classList.toggle('active');
+        }
+
+        /* HIGH-VOLUME NATIVE INPUT INTERFACE
+           Completely replaces prompt() calls to accommodate large datasets effortlessly
         */
-        function pasteRestoreFromClipboard() {
-            let input = prompt("Paste backup string code snippet text here:");
-            if (!input || input.trim() === "") return;
-            input = input.trim();
+        function executeNativeImportPipeline() {
+            let input = document.getElementById('mobile-paste-area').value.trim();
+            if (!input) return alert("Please paste the data string into the text box first.");
+
             let parsedData;
             try {
                 let clearText = input;
@@ -461,12 +476,10 @@
                 if (clearText.startsWith("{")) {
                     parsedData = JSON.parse(clearText);
                 } else {
-                    // Try parsing Base64 encoding cleanly 
                     parsedData = JSON.parse(decodeURIComponent(atob(input)));
                 }
 
                 if (parsedData.trackerData && parsedData.subGroupsMap) {
-                    // Force clean configuration mappings to remove old "General" components logic
                     for (let s in parsedData.subGroupsMap) {
                         if (Array.isArray(parsedData.subGroupsMap[s])) {
                             parsedData.subGroupsMap[s] = parsedData.subGroupsMap[s].filter(g => g !== "General");
@@ -495,13 +508,15 @@
                     }
                     
                     saveData(); 
+                    document.getElementById('mobile-paste-area').value = "";
+                    document.getElementById('mobile-restore-gate').classList.remove('active');
                     switchTab('dash'); 
                     alert("Syllabus database fully restored successfully!");
                 } else {
                     alert("Data error: Key parameters missing.");
                 }
             } catch (err) { 
-                alert("Failed to parse data string. Please check that the data copy is complete."); 
+                alert("Failed to parse data string. Please ensure you copied the entire string completely."); 
             }
         }
 
